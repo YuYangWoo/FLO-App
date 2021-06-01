@@ -1,7 +1,13 @@
 package com.example.floapplication.ui.main.view.fragment
 
+import android.annotation.SuppressLint
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.Observer
+import androidx.media2.exoplayer.external.ExoPlayerFactory
+import androidx.media2.exoplayer.external.SimpleExoPlayer
+import androidx.media2.exoplayer.external.source.ProgressiveMediaSource
+import androidx.media2.exoplayer.external.upstream.DefaultHttpDataSourceFactory
 import com.bumptech.glide.Glide
 import com.example.floapplication.R
 import com.example.floapplication.data.model.Resource
@@ -16,9 +22,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private val model: SongViewModel by sharedViewModel()
     private var songResponse = SongResponse()
     private val TAG = "MAIN_FRAGMENT"
+    private var songUrl = ""
     private val dialog by lazy {
         ProgressDialog(requireContext())
     }
+    private var player: SimpleExoPlayer? = null
 
     override fun init() {
         super.init()
@@ -52,12 +60,18 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         })
     }
 
+    @SuppressLint("RestrictedApi")
     private fun binding() {
         with(binding) {
             txtTitle.text = songResponse.title
             txtAlbum.text = songResponse.album
             txtSinger.text = songResponse.singer
             Glide.with(requireContext()).load(songResponse.image).into(imgAlbum)
+            songUrl = songResponse.file
         }
+
+
     }
+
+
 }

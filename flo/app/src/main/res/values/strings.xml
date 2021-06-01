@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Flo Application</string>
+    <string name="connect_fail">연결실패</string>
 </resources>

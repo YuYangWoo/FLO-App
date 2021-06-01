@@ -7,12 +7,17 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:name=".data.di.MyApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FloApplication"
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true">
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.main.view.activity.MainActivity">
+
+        </activity>
+        <activity android:name=".ui.main.view.activity.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

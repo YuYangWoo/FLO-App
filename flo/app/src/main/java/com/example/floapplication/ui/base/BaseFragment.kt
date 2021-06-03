@@ -9,11 +9,13 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import com.example.floapplication.ui.main.viewmodel.SongViewModel
 import com.google.android.material.snackbar.Snackbar
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 abstract class BaseFragment<VB : ViewDataBinding>(private val layoutId: Int) : Fragment() {
     protected lateinit var binding: VB
-
+    private val model: SongViewModel by sharedViewModel()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,4 +46,12 @@ abstract class BaseFragment<VB : ViewDataBinding>(private val layoutId: Int) : F
         })
         snackbar.show()
     }
+
+    fun seekTo(position: Long) {
+        position?.let { nonNullPosition ->
+            model.seekTo(nonNullPosition)
+
+        }
+    }
+
 }

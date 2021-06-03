@@ -1,9 +1,9 @@
 package com.example.floapplication.ui.main.view.fragment
 
 import android.util.Log
+import android.widget.SeekBar
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
-import androidx.media2.exoplayer.external.SimpleExoPlayer
 import com.bumptech.glide.Glide
 import com.example.floapplication.R
 import com.example.floapplication.data.model.Resource
@@ -12,17 +12,15 @@ import com.example.floapplication.databinding.FragmentMainBinding
 import com.example.floapplication.ui.base.BaseFragment
 import com.example.floapplication.ui.main.view.dialog.ProgressDialog
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
+import com.example.floapplication.util.formatTimeInMillisToString
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.ui.PlayerView
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import com.google.android.exoplayer2.SimpleExoPlayer.Builder
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MediaSourceFactory
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private val model: SongViewModel by sharedViewModel()
@@ -37,34 +35,45 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     override fun init() {
         super.init()
         initViewModel()
-
+        setSeekBar()
+        initListeners()
     }
 
     private fun initViewModel() {
         model.callSong().observe(viewLifecycleOwner, Observer { resource ->
-          when(resource.status) {
-              Resource.Status.SUCCESS -> {
-                  dialog.dismiss()
-                  when(resource.data!!.code()) {
-                      200 -> {
-                          songResponse = resource.data.body()!!
-                          Log.d(TAG, "initViewModel: $songResponse")
-                          binding()
-                      }
-                      else -> {
-                          toast(requireContext(), "연결실패")
-                      }
-                  }
-              }
-              Resource.Status.ERROR -> {
-                  toast(requireContext(), resource.message + "\n" + resources.getString(R.string.connect_fail))
-                  dialog.dismiss()
-              }
-              Resource.Status.LOADING -> {
-                  dialog.show()
-              }
+            when (resource.status) {
+                Resource.Status.SUCCESS -> {
+                    dialog.dismiss()
+                    when (resource.data!!.code()) {
+                        200 -> {
+                            songResponse = resource.data.body()!!
+                            Log.d(TAG, "initViewModel: $songResponse")
+                            binding()
+                        }
+                        else -> {
+                            toast(requireContext(), "연결실패")
+                        }
+                    }
+                }
+                Resource.Status.ERROR -> {
+                    toast(
+                        requireContext(),
+                        resource.message + "\n" + resources.getString(R.string.connect_fail)
+                    )
+                    dialog.dismiss()
+                }
+                Resource.Status.LOADING -> {
+                    dialog.show()
+                }
             }
         })
+
+        with(model) {
+            songPositionTextData.observe(viewLifecycleOwner,
+            Observer { t ->
+                binding.txtStart.text = t
+            })
+        }
     }
 
     private fun binding() {
@@ -74,18 +83,25 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             txtSinger.text = songResponse.singer
             Glide.with(requireContext()).load(songResponse.image).into(imgAlbum)
             songUrl = songResponse.file
+            txtEnd.text = formatTimeInMillisToString(songResponse.duration.toLong())
+            indicatorSeekBar.max = songResponse.duration
+
         }
         initializedPlayer()
-        initListeners()
     }
 
     private fun initializedPlayer() {
-        val mediaDataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(requireContext(), Util.getUserAgent(requireContext(), "mediaPlayerSample"))
+        val mediaDataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
+            requireContext(),
+            Util.getUserAgent(requireContext(), "mediaPlayerSample")
+        )
 
         val mediaSource = ProgressiveMediaSource.Factory(mediaDataSourceFactory).createMediaSource(
-            MediaItem.fromUri(songUrl))
+            MediaItem.fromUri(songUrl)
+        )
 
-        val mediaSourceFactory: MediaSourceFactory = DefaultMediaSourceFactory(mediaDataSourceFactory)
+        val mediaSourceFactory: MediaSourceFactory =
+            DefaultMediaSourceFactory(mediaDataSourceFactory)
 
         simpleExoPlayer = com.google.android.exoplayer2.SimpleExoPlayer.Builder(requireContext())
             .setMediaSourceFactory(mediaSourceFactory)
@@ -96,23 +112,40 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
 
     private fun initListeners() {
-        var bool = false
         binding.btnPlay.setOnClickListener {
-            if(!bool) {
-                Log.d(TAG, "initListeners: 플레이버튼누름")
-                bool = true
-                binding.btnPlay.background = resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
+            if (!simpleExoPlayer.playWhenReady) {
+                binding.btnPlay.background =
+                    resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
                 simpleExoPlayer.playWhenReady = true
-                Log.d(TAG, "initListeners: 플레이버튼누름")
-
-            }
-            else {
-                Log.d(TAG, "initListeners: 정지버튼누름")
+//                MyThread().start()
+            } else {
                 simpleExoPlayer.playWhenReady = false
-                binding.btnPlay.background = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_play_arrow_24, null)
-                bool = false
+                binding.btnPlay.background = ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_baseline_play_arrow_24,
+                    null
+                )
+//                MyThread().stop()
             }
         }
+
+    }
+
+    private fun setSeekBar() {
+        binding.indicatorSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if(fromUser) seekTo(progress.toLong())
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+        })
 
     }
 
@@ -120,5 +153,22 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         simpleExoPlayer.playWhenReady = false
         super.onDestroy()
     }
+
+//    inner class MyThread : Thread() {
+//        override fun run() {
+//            while (simpleExoPlayer.isPlaying) {
+//                sleep(1000L)
+//                activity!!.runOnUiThread {
+//                    binding.indicatorSeekBar.progress = simpleExoPlayer.currentPosition.toInt()
+//                    Log.d(TAG, simpleExoPlayer.currentPosition.toString())
+//                    binding.txtStart.text = formatTimeInMillisToString((simpleExoPlayer!!.currentPosition / 1000))
+//                }
+//            }
+//        }
+//        }
+
+
+
+
 
 }

@@ -14,12 +14,10 @@
     <ImageView
         android:id="@+id/imgAlbum"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="300dp"
         android:layout_marginStart="50dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="50dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtSinger" />
@@ -63,7 +61,19 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_marginBottom="95dp"
+        android:layout_marginTop="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgAlbum" />
+
+    <SeekBar
+        android:id="@+id/indicatorSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="45dp"
+        app:isb_show_indicator="rectangle"
         app:layout_constraintBottom_toTopOf="@+id/btnPlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -72,7 +82,7 @@
         android:id="@+id/btnPlay"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="25dp"
         android:background="@drawable/ic_baseline_play_arrow_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnLater"
@@ -80,8 +90,8 @@
 
     <ImageButton
         android:id="@+id/btnBefore"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="36dp"
         android:background="@drawable/ic_baseline_skip_previous_24"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -92,13 +102,31 @@
     <ImageButton
 
         android:id="@+id/btnLater"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="36dp"
         android:background="@drawable/ic_baseline_skip_next_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnPlay" />
+
+    <TextView
+        android:id="@+id/txtStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/indicatorSeekBar" />
+
+    <TextView
+        android:id="@+id/txtEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/indicatorSeekBar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

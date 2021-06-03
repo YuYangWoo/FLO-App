@@ -88,4 +88,7 @@ dependencies {
     // ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.13.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // indicatorseekbar
+    implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.2'
 }

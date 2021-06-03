@@ -86,8 +86,6 @@ dependencies {
     implementation "io.insert-koin:koin-android:$koin_version"
 
     // ExoPlayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.14.0'
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.14.0'
-    implementation 'com.google.android.exoplayer:exoplayer-dash:2.14.0'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.14.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.13.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

@@ -5,27 +5,15 @@ import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
-fun formatTimeInMillisToString(time: Long): String {
-    var timeInMillis = time
-    var sign = ""
-    if (timeInMillis < 0) {
-        sign = "-"
-        timeInMillis = abs(timeInMillis)
-    }
+fun formatTimeInMillisToString(mSec: Long): String {
+    val hours: Long = mSec / 60 / 60 % 24
+    val minutes: Long = mSec / 60 % 60
+    val seconds: Long = mSec % 60
 
-    val minutes = timeInMillis / TimeUnit.MINUTES.toMillis(1)
-    val seconds = timeInMillis % TimeUnit.MINUTES.toMillis(1) / TimeUnit.SECONDS.toMillis(1)
-
-    val formatted = StringBuilder(20)
-    formatted.append(sign)
-    formatted.append(String.format("%02d", minutes))
-    formatted.append(String.format(":%02d", seconds))
-
-    return try {
-        String(formatted.toString().toByteArray(), Charset.forName("UTF-8"))
-    } catch (e: UnsupportedEncodingException) {
-        e.printStackTrace()
-        "00:00"
+    return if (mSec < 3600000) {
+        String.format("%02d:%02d", minutes, seconds)
+    } else {
+        String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
 }

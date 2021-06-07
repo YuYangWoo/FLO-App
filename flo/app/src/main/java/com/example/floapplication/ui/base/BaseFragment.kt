@@ -47,11 +47,6 @@ abstract class BaseFragment<VB : ViewDataBinding>(private val layoutId: Int) : F
         snackbar.show()
     }
 
-    fun seekTo(position: Long) {
-        position?.let { nonNullPosition ->
-            model.seekTo(nonNullPosition)
 
-        }
-    }
 
 }

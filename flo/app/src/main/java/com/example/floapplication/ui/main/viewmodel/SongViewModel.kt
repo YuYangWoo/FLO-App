@@ -30,4 +30,8 @@ class SongViewModel(private val songRepository: SongRepository) : ViewModel() {
         _songPositionTextData.value = formatTimeInMillisToString(position)
         _songPositionData.value = position.toInt()
     }
+
+    fun moveSeek(position: Long) {
+        _songPositionData.value = position.toInt()
+    }
 }

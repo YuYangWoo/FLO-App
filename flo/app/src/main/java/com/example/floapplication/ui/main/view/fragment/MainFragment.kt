@@ -21,13 +21,6 @@ import com.example.floapplication.ui.base.BaseFragment
 import com.example.floapplication.ui.main.view.dialog.ProgressDialog
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
 import com.example.floapplication.util.formatTimeInMillisToString
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
-import com.google.android.exoplayer2.source.MediaSourceFactory
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.lang.Exception
 
@@ -40,7 +33,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         ProgressDialog(requireContext())
     }
     private var simpleExoPlayer: MediaPlayer = MediaPlayer()
-
+    private var time = 0
     override fun init() {
         super.init()
         initViewModel()
@@ -78,10 +71,18 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         })
 
         with(model) {
+            // Seekbar에 따라 시작시간 Text 바꾸기
             songPositionTextData.observe(viewLifecycleOwner,
-            Observer { t ->
-                binding.txtStart.text = t
-            })
+                Observer { t ->
+                    binding.txtStart.text = t
+                })
+            // 쓰레드로 이동함에 따라 Seekbar progress 바꾸기
+            songPositionData.observe(viewLifecycleOwner,
+                Observer { t ->
+                    Log.d(TAG, "initViewModel: 이동중 + ${t}")
+                    binding.indicatorSeekBar.progress = t
+                    simpleExoPlayer.seekTo(t*1000)
+                })
         }
     }
 
@@ -95,9 +96,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             txtEnd.text = formatTimeInMillisToString(songResponse.duration.toLong())
             indicatorSeekBar.max = songResponse.duration
         }
-        Log.d(TAG, "binding: $songUrl")
         simpleExoPlayer?.apply {
-            setAudioAttributes(AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
+            setAudioAttributes(
+                AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()
+            )
             setDataSource(songResponse.file)
             prepare()
         }
@@ -108,27 +110,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private fun initListeners() {
         var bool = false
         binding.btnPlay.setOnClickListener {
-            if (!bool) {
+            if (!simpleExoPlayer.isPlaying) {
                 binding.btnPlay.background =
                     resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
                 simpleExoPlayer.start()
                 bool = true
-                Thread(Runnable {
-                    kotlin.run {
-                        while (simpleExoPlayer.isPlaying) {
-                            try {
-                                Thread.sleep(1000)
-                            }
-                            catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                            binding.indicatorSeekBar.progress = simpleExoPlayer.currentPosition.toInt()
-                            Log.d(TAG, "initListeners: ${simpleExoPlayer.currentPosition}")
-
-                        }
-                    }
-
-                }).start()
+                Thread()
             } else {
                 simpleExoPlayer.pause()
                 binding.btnPlay.background = ResourcesCompat.getDrawable(
@@ -143,10 +130,16 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
 
     private fun setSeekBar() {
-        binding.indicatorSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+        var tempSeekParams: Int? = null
+        binding.indicatorSeekBar.setOnSeekBarChangeListener(object :
+            SeekBar.OnSeekBarChangeListener {
             // 사용자가 바꾸고 있으면
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if(fromUser) seekTo(progress.toLong())
+                if (fromUser) {
+                    Log.d(TAG, "onProgressChanged: ${progress}")
+                    seekTo(progress.toLong())
+                    tempSeekParams = progress
+                }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -155,7 +148,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
             // 시크바를 멈추면
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                model.songPositionData.value?.let { simpleExoPlayer!!.seekTo(it) }
+                simpleExoPlayer.seekTo(tempSeekParams!!)
             }
 
         })
@@ -178,6 +171,27 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         }
     }
 
+    fun Thread() {
+        var task = Runnable{
+        run {
+            while(simpleExoPlayer.isPlaying) {
+                try {
+                    Thread.sleep(1000)
+                }
+                catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                requireActivity().runOnUiThread {
+                    binding.indicatorSeekBar.progress = simpleExoPlayer.currentPosition / 1000
+                    binding.txtStart.text = formatTimeInMillisToString((simpleExoPlayer.currentPosition.toLong()/1000)+1)
+                }
+
+            }
+        }
+        }
+        var thread = Thread(task)
+        thread.start()
+    }
     companion object {
         private const val ACTION_START = 1
         private const val ACTION_PAUSE = 2

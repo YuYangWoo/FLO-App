@@ -31,7 +31,4 @@ class SongViewModel(private val songRepository: SongRepository) : ViewModel() {
         _songPositionData.value = position.toInt()
     }
 
-    fun moveSeek(position: Long) {
-        _songPositionData.value = position.toInt()
-    }
 }

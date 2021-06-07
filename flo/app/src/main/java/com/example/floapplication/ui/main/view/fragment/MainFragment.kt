@@ -79,7 +79,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             // 쓰레드로 이동함에 따라 Seekbar progress 바꾸기
             songPositionData.observe(viewLifecycleOwner,
                 Observer { t ->
-                    Log.d(TAG, "initViewModel: 이동중 + ${t}")
                     binding.indicatorSeekBar.progress = t
                 })
         }
@@ -157,7 +156,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     override fun onStop() {
         super.onStop()
-        simpleExoPlayer.stop()
+        when(simpleExoPlayer.isPlaying) {
+            true -> {
+                binding.btnPlay.background = resources.getDrawable(R.drawable.ic_baseline_play_arrow_24, null)
+                simpleExoPlayer.pause()
+            }
+        }
+
     }
 
     override fun onDestroy() {
@@ -182,9 +187,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                     e.printStackTrace()
                 }
                 requireActivity().runOnUiThread {
-                    binding.indicatorSeekBar.progress = simpleExoPlayer.currentPosition / 1000
-                    binding.txtStart.text = formatTimeInMillisToString((simpleExoPlayer.currentPosition.toLong()/1000)+1)
+                    model.seekTo(simpleExoPlayer.currentPosition.toLong()/1000)
                 }
+
+            }
+            if(!simpleExoPlayer.isPlaying) {
+                binding.btnPlay.background = resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
 
             }
         }

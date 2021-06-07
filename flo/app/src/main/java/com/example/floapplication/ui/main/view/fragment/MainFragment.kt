@@ -81,7 +81,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 Observer { t ->
                     Log.d(TAG, "initViewModel: 이동중 + ${t}")
                     binding.indicatorSeekBar.progress = t
-                    simpleExoPlayer.seekTo(t*1000)
                 })
         }
     }
@@ -148,7 +147,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
             // 시크바를 멈추면
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                simpleExoPlayer.seekTo(tempSeekParams!!)
+                simpleExoPlayer.seekTo(tempSeekParams!!*1000)
+                Log.d(TAG, "onStopTrackingTouch: 현재 ${simpleExoPlayer.currentPosition}")
             }
 
         })
@@ -192,6 +192,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         var thread = Thread(task)
         thread.start()
     }
+
     companion object {
         private const val ACTION_START = 1
         private const val ACTION_PAUSE = 2

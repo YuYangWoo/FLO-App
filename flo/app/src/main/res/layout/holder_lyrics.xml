@@ -17,8 +17,9 @@
             android:gravity="center"
             android:id="@+id/txtLyrics"
             android:layout_width="match_parent"
-            android:textColor="@color/black"
-            android:textStyle="bold"
+            android:textColor="@{list.highlight?  0xffffffff : 0xFFBDBDBD}"
+            highLightBold="@{list.highlight}"
+            highLightSize="@{list.highlight}"
             android:textSize="17sp"
             android:text="@{list.lyric, default= 빠끄}"
             android:layout_height="wrap_content"/>

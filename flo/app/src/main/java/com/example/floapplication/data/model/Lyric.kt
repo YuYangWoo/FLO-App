@@ -4,8 +4,9 @@ import java.io.Serializable
 
 data class Lyric(
     var time: Int,
-    var lyric: String
+    var lyric: String,
+    var highlight: Boolean
 ): Serializable {
-    constructor(): this(0,"")
+    constructor(): this(0,"", false)
 }
 

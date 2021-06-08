@@ -22,6 +22,7 @@ import com.example.floapplication.ui.adapter.LyricsAdapter
 import com.example.floapplication.ui.base.BaseFragment
 import com.example.floapplication.ui.main.view.dialog.ProgressDialog
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
+import com.example.floapplication.util.findLowerBound
 import com.example.floapplication.util.formatTimeInMillisToString
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -39,7 +40,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
     private var simpleExoPlayer: MediaPlayer = MediaPlayer()
     private var lyricList = ArrayList<Lyric>()
-    var nowIndex = 0
+    var nowIndex = -1
 
     override fun init() {
         super.init()
@@ -197,19 +198,28 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 while (simpleExoPlayer.isPlaying) {
                     try {
                         sleep(1000)
-
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                     requireActivity().runOnUiThread {
                         model.seekTo(simpleExoPlayer.currentPosition.toLong() / 1000)
-                    }
+                        var tmpIndex = findLowerBound(lyricList, (simpleExoPlayer!!.currentPosition))
+                        if (nowIndex != tmpIndex) { // 현재의 가사
+                            lyricList[tmpIndex].highlight = true
 
+                            if (nowIndex >= 0) {// 나머지 가사
+                                lyricList[nowIndex].highlight = false
+                            }
+                            nowIndex = tmpIndex
+
+                            var centerOfScreen = binding.recyclerView.height / 3
+                            (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                                tmpIndex,
+                                centerOfScreen
+                            )
+                        }
+                    }
                 }
-//                if (!simpleExoPlayer.isPlaying) {
-//                    binding.btnPlay.background =
-//                        resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
-//                }
             }
         }
 

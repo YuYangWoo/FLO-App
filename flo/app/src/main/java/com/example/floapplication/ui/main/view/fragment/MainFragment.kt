@@ -133,11 +133,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     private fun initListeners() {
         binding.btnPlay.setOnClickListener {
-            if (!simpleExoPlayer.isPlaying) {
+            if (!simpleExoPlayer.isPlaying) { // 노래가 안나올 때
                 binding.btnPlay.background =
                     resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
                 simpleExoPlayer.start()
-                Thread()
+                MyThread().threadStart()
             } else {
                 simpleExoPlayer.pause()
                 binding.btnPlay.background = ResourcesCompat.getDrawable(
@@ -145,6 +145,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                     R.drawable.ic_baseline_play_arrow_24,
                     null
                 )
+                MyThread().threadPause()
             }
         }
 
@@ -200,12 +201,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         }
     }
 
-    private fun Thread() {
+    inner class MyThread : Thread() {
         var task = Runnable {
             run {
                 while (simpleExoPlayer.isPlaying) {
                     try {
-                        Thread.sleep(1000)
+                        sleep(1000)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -214,21 +215,22 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                     }
 
                 }
-                if (!simpleExoPlayer.isPlaying) {
-                    binding.btnPlay.background =
-                        resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
-
-                }
+//                if (!simpleExoPlayer.isPlaying) {
+//                    binding.btnPlay.background =
+//                        resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
+//                }
             }
         }
-        var thread = Thread(task)
-        thread.start()
-    }
+       fun threadStart() {
+            var thread = Thread(task)
+            thread.start()
+        }
 
-    companion object {
-        private const val ACTION_START = 1
-        private const val ACTION_PAUSE = 2
-        private const val ACTION_STOP = 3
+       fun threadPause() {
+            var thread = Thread(task)
+            thread.interrupt()
+        }
+
     }
 
 }

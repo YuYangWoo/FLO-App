@@ -11,17 +11,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imgAlbum"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="50dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSinger" />
-
     <TextView
         android:id="@+id/txtTitle"
         style="@style/BaseText"
@@ -55,58 +44,84 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
 
+    <ImageView
+        android:id="@+id/imgAlbum"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtSinger"
+        app:layout_constraintBottom_toTopOf="@id/guideLine"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintGuide_percent="0.6"
+        android:orientation="horizontal"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginTop="25dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgAlbum" />
+        app:layout_constraintTop_toBottomOf="@+id/guideLine" />
 
     <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/indicatorSeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="45dp"
         app:isb_show_indicator="rectangle"
-        app:layout_constraintBottom_toTopOf="@+id/btnPlay"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideLine2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintGuide_percent="0.85"
+        android:orientation="horizontal"/>
 
     <ImageButton
         android:id="@+id/btnPlay"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/ic_baseline_play_arrow_24"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnLater"
-        app:layout_constraintStart_toEndOf="@+id/btnBefore" />
+        app:layout_constraintStart_toEndOf="@+id/btnBefore"
+        app:layout_constraintTop_toBottomOf="@+id/guideLine2" />
 
     <ImageButton
         android:id="@+id/btnBefore"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginTop="9dp"
         android:background="@drawable/ic_baseline_skip_previous_24"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnPlay"
         app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnPlay" />
 
     <ImageButton
 
         android:id="@+id/btnLater"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginTop="9dp"
         android:background="@drawable/ic_baseline_skip_next_24"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnPlay" />
+        app:layout_constraintStart_toEndOf="@+id/btnPlay"
+        app:layout_constraintTop_toTopOf="@+id/btnPlay" />
 
     <TextView
         android:id="@+id/txtStart"

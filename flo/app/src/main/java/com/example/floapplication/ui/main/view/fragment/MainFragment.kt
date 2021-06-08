@@ -14,15 +14,18 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.floapplication.R
+import com.example.floapplication.data.model.Lyric
 import com.example.floapplication.data.model.Resource
 import com.example.floapplication.data.model.SongResponse
 import com.example.floapplication.databinding.FragmentMainBinding
+import com.example.floapplication.ui.adapter.LyricsAdapter
 import com.example.floapplication.ui.base.BaseFragment
 import com.example.floapplication.ui.main.view.dialog.ProgressDialog
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
 import com.example.floapplication.util.formatTimeInMillisToString
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.lang.Exception
+import java.lang.StringBuilder
 
 class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private val model: SongViewModel by sharedViewModel()
@@ -33,7 +36,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         ProgressDialog(requireContext())
     }
     private var simpleExoPlayer: MediaPlayer = MediaPlayer()
-    private var time = 0
+    private var lyricList = ArrayList<Lyric>()
     override fun init() {
         super.init()
         initViewModel()
@@ -50,7 +53,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                             songResponse = resource.data.body()!!
                             Log.d(TAG, "initViewModel: $songResponse")
                             binding()
-
+                            initRecyclerView(songResponse.lyrics)
                         }
                         else -> {
                             toast(requireContext(), "연결실패")
@@ -84,6 +87,25 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         }
     }
 
+    private fun initRecyclerView(lyrics: String) {
+
+        for (i in lyrics.split("\n")) {
+            var tempLyric = Lyric()
+            tempLyric.time = i.split("]")[0]
+            tempLyric.lyric = i.split("]")[1]
+            lyricList.add(tempLyric)
+        }
+        Log.d(TAG, "initRecyclerView: ${lyricList}")
+        with(binding.recyclerView) {
+            adapter = LyricsAdapter().apply {
+                lyricsList = lyricList
+                notifyDataSetChanged()
+            }
+            layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(true)
+        }
+    }
+
     private fun binding() {
         with(binding) {
             txtTitle.text = songResponse.title
@@ -94,6 +116,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             txtEnd.text = formatTimeInMillisToString(songResponse.duration.toLong())
             indicatorSeekBar.max = songResponse.duration
         }
+
         simpleExoPlayer?.apply {
             setAudioAttributes(
                 AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()
@@ -106,13 +129,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
 
     private fun initListeners() {
-        var bool = false
         binding.btnPlay.setOnClickListener {
             if (!simpleExoPlayer.isPlaying) {
                 binding.btnPlay.background =
                     resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
                 simpleExoPlayer.start()
-                bool = true
                 Thread()
             } else {
                 simpleExoPlayer.pause()
@@ -121,7 +142,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                     R.drawable.ic_baseline_play_arrow_24,
                     null
                 )
-                bool = false
             }
         }
 
@@ -146,7 +166,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
             // 시크바를 멈추면
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                simpleExoPlayer.seekTo(tempSeekParams!!*1000)
+                simpleExoPlayer.seekTo(tempSeekParams!! * 1000)
                 Log.d(TAG, "onStopTrackingTouch: 현재 ${simpleExoPlayer.currentPosition}")
             }
 
@@ -156,9 +176,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     override fun onStop() {
         super.onStop()
-        when(simpleExoPlayer.isPlaying) {
+        when (simpleExoPlayer.isPlaying) {
             true -> {
-                binding.btnPlay.background = resources.getDrawable(R.drawable.ic_baseline_play_arrow_24, null)
+                binding.btnPlay.background =
+                    resources.getDrawable(R.drawable.ic_baseline_play_arrow_24, null)
                 simpleExoPlayer.pause()
             }
         }
@@ -170,32 +191,32 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         super.onDestroy()
     }
 
-    fun seekTo(position: Long) {
+    private fun seekTo(position: Long) {
         position?.let { nonNullPosition ->
             model.seekTo(nonNullPosition)
         }
     }
 
-    fun Thread() {
-        var task = Runnable{
-        run {
-            while(simpleExoPlayer.isPlaying) {
-                try {
-                    Thread.sleep(1000)
-                }
-                catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                requireActivity().runOnUiThread {
-                    model.seekTo(simpleExoPlayer.currentPosition.toLong()/1000)
-                }
+    private fun Thread() {
+        var task = Runnable {
+            run {
+                while (simpleExoPlayer.isPlaying) {
+                    try {
+                        Thread.sleep(1000)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    requireActivity().runOnUiThread {
+                        model.seekTo(simpleExoPlayer.currentPosition.toLong() / 1000)
+                    }
 
-            }
-            if(!simpleExoPlayer.isPlaying) {
-                binding.btnPlay.background = resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
+                }
+                if (!simpleExoPlayer.isPlaying) {
+                    binding.btnPlay.background =
+                        resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
 
+                }
             }
-        }
         }
         var thread = Thread(task)
         thread.start()

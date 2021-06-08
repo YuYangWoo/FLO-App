@@ -91,11 +91,14 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
         for (i in lyrics.split("\n")) {
             var tempLyric = Lyric()
-            tempLyric.time = i.split("]")[0]
+            var tempTime = i.split("[")[1].split("]")[0].split(":") as ArrayList<String>
+
+            tempLyric.time = tempTime[0].toInt() * 60000 + tempTime[1].toInt() * 1000 + tempTime[2].toInt()
             tempLyric.lyric = i.split("]")[1]
             lyricList.add(tempLyric)
         }
         Log.d(TAG, "initRecyclerView: ${lyricList}")
+
         with(binding.recyclerView) {
             adapter = LyricsAdapter().apply {
                 lyricsList = lyricList

@@ -7,6 +7,9 @@
             name="mFragment"
             type="com.example.floapplication.ui.main.view.fragment.MainFragment" />
     </data>
+
+
+
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -44,17 +47,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
 
-    <ImageView
-        android:id="@+id/imgAlbum"
+    <androidx.cardview.widget.CardView
         android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="50dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toTopOf="@id/guideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtSinger"
-        app:layout_constraintBottom_toTopOf="@id/guideLine"/>
+        app:layout_constraintWidth_percent="0.8">
+
+        <ImageView
+            android:id="@+id/imgAlbum"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.cardview.widget.CardView>
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideLine"
@@ -88,18 +98,18 @@
         android:id="@+id/guideLine2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintGuide_percent="0.85"
+        app:layout_constraintGuide_percent="0.97"
         android:orientation="horizontal"/>
 
     <ImageButton
         android:id="@+id/btnPlay"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginTop="15dp"
         android:background="@drawable/ic_baseline_play_arrow_24"
         app:layout_constraintEnd_toStartOf="@+id/btnLater"
         app:layout_constraintStart_toEndOf="@+id/btnBefore"
-        app:layout_constraintTop_toBottomOf="@+id/guideLine2" />
+        app:layout_constraintBottom_toTopOf="@id/guideLine2"
+       />
 
     <ImageButton
         android:id="@+id/btnBefore"
@@ -141,6 +151,7 @@
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/indicatorSeekBar" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

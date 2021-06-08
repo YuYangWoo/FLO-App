@@ -23,8 +23,10 @@ import com.example.floapplication.ui.base.BaseFragment
 import com.example.floapplication.ui.main.view.dialog.ProgressDialog
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
 import com.example.floapplication.util.formatTimeInMillisToString
+import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.lang.Exception
+import java.lang.Runnable
 import java.lang.StringBuilder
 
 class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
@@ -37,10 +39,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
     private var simpleExoPlayer: MediaPlayer = MediaPlayer()
     private var lyricList = ArrayList<Lyric>()
+    var nowIndex = 0
+
     override fun init() {
         super.init()
         initViewModel()
         initListeners()
+        setSeekBar()
     }
 
     private fun initViewModel() {
@@ -88,16 +93,16 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
 
     private fun initRecyclerView(lyrics: String) {
-
         for (i in lyrics.split("\n")) {
             var tempLyric = Lyric()
             var tempTime = i.split("[")[1].split("]")[0].split(":") as ArrayList<String>
-
-            tempLyric.time = tempTime[0].toInt() * 60000 + tempTime[1].toInt() * 1000 + tempTime[2].toInt()
+            tempLyric.time =
+                tempTime[0].toInt() * 60000 + tempTime[1].toInt() * 1000 + tempTime[2].toInt()
             tempLyric.lyric = i.split("]")[1]
             lyricList.add(tempLyric)
         }
-        Log.d(TAG, "initRecyclerView: ${lyricList}")
+        model.getLyrics(lyricList)
+        Log.d(TAG, "initRecyclerView: ${model.lyricsData.value}")
 
         with(binding.recyclerView) {
             adapter = LyricsAdapter().apply {
@@ -105,6 +110,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 notifyDataSetChanged()
             }
             layoutManager = LinearLayoutManager(requireContext())
+
             setHasFixedSize(true)
         }
     }
@@ -128,7 +134,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             prepare()
         }
 
-        setSeekBar()
     }
 
     private fun initListeners() {
@@ -152,15 +157,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
 
     private fun setSeekBar() {
-        var tempSeekParams: Int? = null
         binding.indicatorSeekBar.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             // 사용자가 바꾸고 있으면
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     Log.d(TAG, "onProgressChanged: ${progress}")
-                    seekTo(progress.toLong())
-                    tempSeekParams = progress
+                    model.seekTo(progress.toLong())
                 }
             }
 
@@ -170,35 +173,22 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
             // 시크바를 멈추면
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                simpleExoPlayer.seekTo(tempSeekParams!! * 1000)
+                simpleExoPlayer.seekTo(model.songPositionData.value!! * 1000)
                 Log.d(TAG, "onStopTrackingTouch: 현재 ${simpleExoPlayer.currentPosition}")
             }
-
         })
 
     }
 
     override fun onStop() {
         super.onStop()
-        when (simpleExoPlayer.isPlaying) {
-            true -> {
-                binding.btnPlay.background =
-                    resources.getDrawable(R.drawable.ic_baseline_play_arrow_24, null)
-                simpleExoPlayer.pause()
-            }
-        }
-
+        binding.btnPlay.background = resources.getDrawable(R.drawable.ic_baseline_play_arrow_24, null)
+        simpleExoPlayer.pause()
     }
 
     override fun onDestroy() {
-        simpleExoPlayer.release()
         super.onDestroy()
-    }
-
-    private fun seekTo(position: Long) {
-        position?.let { nonNullPosition ->
-            model.seekTo(nonNullPosition)
-        }
+        simpleExoPlayer.release()
     }
 
     inner class MyThread : Thread() {
@@ -207,6 +197,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 while (simpleExoPlayer.isPlaying) {
                     try {
                         sleep(1000)
+
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -221,12 +212,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 //                }
             }
         }
-       fun threadStart() {
+
+        fun threadStart() {
             var thread = Thread(task)
             thread.start()
         }
 
-       fun threadPause() {
+        fun threadPause() {
             var thread = Thread(task)
             thread.interrupt()
         }

@@ -90,6 +90,14 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 Observer { t ->
                     binding.indicatorSeekBar.progress = t
                 })
+            lyricsData.observe(viewLifecycleOwner,
+            Observer { t ->
+                LyricsAdapter().apply {
+                    Log.d(TAG, "initViewModel: 가사강조 $t")
+                    lyricsList = t
+                    notifyDataSetChanged()
+                }
+            })
         }
     }
 
@@ -205,10 +213,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                         model.seekTo(simpleExoPlayer.currentPosition.toLong() / 1000)
                         var tmpIndex = findLowerBound(lyricList, (simpleExoPlayer!!.currentPosition))
                         if (nowIndex != tmpIndex) { // 현재의 가사
+                            // 아이거 그거다. arraylist를 바꾸는 법 모델.
                             lyricList[tmpIndex].highlight = true
-
+                            model.lyricAdd(lyricList)
                             if (nowIndex >= 0) {// 나머지 가사
                                 lyricList[nowIndex].highlight = false
+                                model.lyricAdd(lyricList)
                             }
                             nowIndex = tmpIndex
 

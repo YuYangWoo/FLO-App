@@ -1,5 +1,6 @@
 package com.example.floapplication.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -17,6 +18,7 @@ class LyricsAdapter : RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
 
     override fun onBindViewHolder(holder: LyricsAdapter.ListViewHolder, position: Int) {
         holder.bind(lyricsList[position])
+        Log.d("TAG", "onBindViewHolder: ${lyricsList[position]}")
     }
 
     override fun getItemCount(): Int {

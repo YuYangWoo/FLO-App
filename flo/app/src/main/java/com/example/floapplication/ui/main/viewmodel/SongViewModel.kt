@@ -38,5 +38,8 @@ class SongViewModel(private val songRepository: SongRepository) : ViewModel() {
         _songPositionTextData.value = formatTimeInMillisToString(position)
         _songPositionData.value = position.toInt()
     }
+    fun lyricAdd(item : ArrayList<Lyric>) {
+        _lyricsData.postValue(item)
+    }
 
 }

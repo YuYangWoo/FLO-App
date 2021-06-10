@@ -3,11 +3,13 @@ package com.example.floapplication.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.floapplication.data.model.Lyric
 import com.example.floapplication.databinding.HolderItemBinding
 import com.example.floapplication.databinding.HolderLyricsBinding
 import com.example.floapplication.ui.main.view.fragment.LyricBottomSheet
+import com.example.floapplication.util.DiffCallBack
 
 class LyricViewAdpater : RecyclerView.Adapter<LyricViewAdpater.LyricViewHolder>(){
     var lyricsList = ArrayList<Lyric>()
@@ -25,6 +27,15 @@ class LyricViewAdpater : RecyclerView.Adapter<LyricViewAdpater.LyricViewHolder>(
 
     override fun getItemCount(): Int {
         return lyricsList.size
+    }
+
+    fun changeList(newLyricList: ArrayList<Lyric>) {
+        val diffCallBack = DiffCallBack(lyricsList, newLyricList)
+        val diffResult = DiffUtil.calculateDiff(diffCallBack)
+        lyricsList.clear()
+        lyricsList.addAll(newLyricList)
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
     inner class LyricViewHolder(private val binding: HolderItemBinding) : RecyclerView.ViewHolder(binding.root) {

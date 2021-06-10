@@ -21,6 +21,8 @@ class SongViewModel(private val songRepository: SongRepository) : ViewModel() {
     val songPositionData: LiveData<Int> = _songPositionData
     private val _lyricsData = MutableLiveData<ArrayList<Lyric>>()
     val lyricsData: LiveData<ArrayList<Lyric>> = _lyricsData
+    private val _playStatus = MutableLiveData<Int>()
+    val playStatus = _playStatus
 
     // Song 통신
     fun callSong() = liveData {

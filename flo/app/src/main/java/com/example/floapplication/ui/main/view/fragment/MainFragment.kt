@@ -87,9 +87,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             lyricsData.observe(viewLifecycleOwner,
                 Observer { t ->
                     Log.d(TAG, "initViewModelis lyricsData ${t}")
+//                    LyricsAdapter().notifyItemChanged(tmpIndex)
                     binding.recyclerView.adapter = LyricsAdapter().apply {
+                        setHasStableIds(true)
                         lyricsList = t
-                        notifyDataSetChanged()
+//                        notifyDataSetChanged()
+                        notifyItemChanged(tmpIndex, "Lyric")
                     }
                 })
         }
@@ -230,4 +233,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     }
 
+    companion object {
+
+    }
 }

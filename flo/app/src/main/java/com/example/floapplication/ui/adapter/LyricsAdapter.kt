@@ -13,7 +13,7 @@ import com.example.floapplication.databinding.HolderItemBinding
 import com.example.floapplication.databinding.HolderLyricsBinding
 import com.example.floapplication.ui.main.view.fragment.LyricBottomSheet
 
-class LyricsAdapter constructor(): RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
+class LyricsAdapter : RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
     var lyricsList = ArrayList<Lyric>()
     var TAG = "LYRICS_ADAPTER"
     var kind = 0
@@ -27,8 +27,20 @@ class LyricsAdapter constructor(): RecyclerView.Adapter<LyricsAdapter.ListViewHo
         holder.bind(lyricsList[position])
     }
 
+    override fun onBindViewHolder(
+        holder: ListViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if(payloads.isEmpty())
+        super.onBindViewHolder(holder, position, payloads)
+    }
     override fun getItemCount(): Int {
         return lyricsList.size
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
     inner class ListViewHolder(private val binding: HolderLyricsBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -43,9 +55,4 @@ class LyricsAdapter constructor(): RecyclerView.Adapter<LyricsAdapter.ListViewHo
         }
     }
 
-    inner class LyricViewHolder(private val binding: HolderItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Lyric) {
-            binding.list = data
-        }
-    }
 }

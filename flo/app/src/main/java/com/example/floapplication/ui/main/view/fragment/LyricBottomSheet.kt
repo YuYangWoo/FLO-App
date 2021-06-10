@@ -37,14 +37,17 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
     private fun initViewModel() {
         model.lyricsData.observe(viewLifecycleOwner, Observer { t ->
             binding.recyclerLyric.adapter = LyricViewAdpater().apply {
-                lyricsList = t
-                notifyDataSetChanged()
+                setHasStableIds(true)
+                changeList(t)
+//                model.getLyrics(t)
             }
         })
     }
+
     private fun initRecyclerView() {
         with(binding.recyclerLyric) {
             adapter = LyricViewAdpater().apply {
+                setHasStableIds(true)
                 lyricsList = model.lyricsData.value!!
                 notifyDataSetChanged()
             }

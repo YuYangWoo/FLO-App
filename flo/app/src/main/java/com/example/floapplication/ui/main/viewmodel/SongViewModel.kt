@@ -6,12 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.example.floapplication.data.model.Lyric
 import com.example.floapplication.data.model.Resource
+import com.example.floapplication.data.model.SongResponse
 import com.example.floapplication.data.repository.SongRepository
 import com.example.floapplication.util.formatTimeInMillisToString
 import java.lang.Exception
 
 class SongViewModel(private val songRepository: SongRepository) : ViewModel() {
 
+    private val _songData = MutableLiveData<SongResponse>()
+    val songData: LiveData<SongResponse> = _songData
     private val _songPositionTextData = MutableLiveData<String>() //
     val songPositionTextData: LiveData<String> = _songPositionTextData
     private val _songPositionData = MutableLiveData<Int>() //
@@ -28,6 +31,10 @@ class SongViewModel(private val songRepository: SongRepository) : ViewModel() {
         catch(e: Exception) {
             emit(Resource.error(null, e.message ?: "Error Occurred!"))
         }
+    }
+
+    fun getSongData(songResponse: SongResponse) {
+        _songData.value = songResponse
     }
 
     fun getLyrics(lyric: ArrayList<Lyric>) {

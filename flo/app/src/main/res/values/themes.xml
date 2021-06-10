@@ -19,7 +19,7 @@
     </style>
 
     <style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@android:color/transparent</item>
+        <item name="android:background">@android:color/background_light</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

@@ -1,18 +1,12 @@
 package com.example.floapplication.ui.main.view.fragment
 
 import android.media.AudioAttributes
-import android.media.AudioManager
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
-import android.os.SystemClock
 import android.util.Log
 import android.widget.SeekBar
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.floapplication.R
 import com.example.floapplication.data.model.Lyric
 import com.example.floapplication.data.model.Resource
@@ -23,12 +17,9 @@ import com.example.floapplication.ui.base.BaseFragment
 import com.example.floapplication.ui.main.view.dialog.ProgressDialog
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
 import com.example.floapplication.util.findLowerBound
-import com.example.floapplication.util.formatTimeInMillisToString
-import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.lang.Exception
 import java.lang.Runnable
-import java.lang.StringBuilder
 
 class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private val model: SongViewModel by sharedViewModel()
@@ -38,7 +29,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private val dialog by lazy {
         ProgressDialog(requireContext())
     }
-    private var simpleExoPlayer: MediaPlayer = MediaPlayer()
+    private var mediaPlayer: MediaPlayer = MediaPlayer()
     private var lyricList = ArrayList<Lyric>()
     var nowIndex = -1
     var tmpIndex = 0
@@ -58,6 +49,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                     when (resource.data!!.code()) {
                         200 -> {
                             songResponse = resource.data.body()!!
+                            model.getSongData(resource.data.body()!!)
                             Log.d(TAG, "initViewModel: $songResponse")
                             binding()
                             initRecyclerView(songResponse.lyrics)
@@ -104,6 +96,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
 
     private fun initRecyclerView(lyrics: String) {
+        // 가사 시간과 가사로 자르기
         for (i in lyrics.split("\n")) {
             var tempLyric = Lyric()
             var tempTime = i.split("[")[1].split("]")[0].split(":") as ArrayList<String>
@@ -112,7 +105,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             tempLyric.lyric = i.split("]")[1]
             lyricList.add(tempLyric)
         }
-
+        model.getLyrics(lyricList)
         with(binding.recyclerView) {
             adapter = LyricsAdapter().apply {
                 lyricsList = lyricList
@@ -124,9 +117,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         }
     }
 
+    // Binding과 초기화
     private fun binding() {
         binding.song = songResponse
-        simpleExoPlayer?.apply {
+        mediaPlayer?.apply {
             setAudioAttributes(
                 AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()
             )
@@ -136,15 +130,16 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     }
 
+    // 클릭 이벤트
     private fun initListeners() {
         binding.btnPlay.setOnClickListener {
-            if (!simpleExoPlayer.isPlaying) { // 노래가 안나올 때
+            if (!mediaPlayer.isPlaying) { // 노래가 안나올 때
                 binding.btnPlay.background =
                     resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
-                simpleExoPlayer.start()
+                mediaPlayer.start()
                 MyThread().threadStart()
             } else {
-                simpleExoPlayer.pause()
+                mediaPlayer.pause()
                 binding.btnPlay.background = ResourcesCompat.getDrawable(
                     resources,
                     R.drawable.ic_baseline_play_arrow_24,
@@ -156,6 +151,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     }
 
+    // SeekBar Listener
     private fun setSeekBar() {
         binding.indicatorSeekBar.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
@@ -173,8 +169,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
             // 시크바를 멈추면
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                simpleExoPlayer.seekTo(model.songPositionData.value!! * 1000)
-                Log.d(TAG, "onStopTrackingTouch: 현재 ${simpleExoPlayer.currentPosition}")
+                mediaPlayer.seekTo(model.songPositionData.value!! * 1000)
+                Log.d(TAG, "onStopTrackingTouch: 현재 ${mediaPlayer.currentPosition}")
             }
         })
 
@@ -184,26 +180,26 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         super.onStop()
         binding.btnPlay.background =
             resources.getDrawable(R.drawable.ic_baseline_play_arrow_24, null)
-        simpleExoPlayer.pause()
+        mediaPlayer.pause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        simpleExoPlayer.release()
+        mediaPlayer.release()
     }
 
     inner class MyThread : Thread() {
         var task = Runnable {
             run {
-                while (simpleExoPlayer.isPlaying) {
+                while (mediaPlayer.isPlaying) {
                     try {
                         sleep(1000)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                     requireActivity().runOnUiThread {
-                        model.seekTo(simpleExoPlayer.currentPosition.toLong() / 1000)
-                        tmpIndex = findLowerBound(lyricList, (simpleExoPlayer!!.currentPosition))
+                        model.seekTo(mediaPlayer.currentPosition.toLong() / 1000)
+                        tmpIndex = findLowerBound(lyricList, (mediaPlayer!!.currentPosition))
                         if (nowIndex != tmpIndex) { // 현재의 가사
                             lyricList[tmpIndex].highlight = true
                             if (nowIndex >= 0) {// 나머지 가사

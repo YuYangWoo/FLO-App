@@ -42,6 +42,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private var lyricList = ArrayList<Lyric>()
     var nowIndex = -1
     var tmpIndex = 0
+
     override fun init() {
         super.init()
         initViewModel()
@@ -90,25 +91,15 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 Observer { t ->
                     binding.indicatorSeekBar.progress = t
                 })
+            // 가사 데이터 관찰에 따른 강조
             lyricsData.observe(viewLifecycleOwner,
-            Observer { t ->
-                Log.d(TAG, "initViewModelis lyricsData ${t}")
-                binding.recyclerView.adapter = LyricsAdapter().apply {
-                    lyricsList = t
-                    notifyDataSetChanged()
-                }
-
-//
-//                (binding.recyclerView.adapter as LyricsAdapter).apply {
-//                    lyricsList = t
-//                    notifyDataSetChanged()
-//                }
-//                var centerOfScreen = binding.recyclerView.height / 3
-//                (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-//                    tmpIndex,
-//                    centerOfScreen
-//                )
-            })
+                Observer { t ->
+                    Log.d(TAG, "initViewModelis lyricsData ${t}")
+                    binding.recyclerView.adapter = LyricsAdapter().apply {
+                        lyricsList = t
+                        notifyDataSetChanged()
+                    }
+                })
         }
     }
 
@@ -121,8 +112,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             tempLyric.lyric = i.split("]")[1]
             lyricList.add(tempLyric)
         }
-        model.getLyrics(lyricList)
-        Log.d(TAG, "initRecyclerView: ${model.lyricsData.value}")
 
         with(binding.recyclerView) {
             adapter = LyricsAdapter().apply {
@@ -136,16 +125,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
 
     private fun binding() {
-        with(binding) {
-            txtTitle.text = songResponse.title
-            txtAlbum.text = songResponse.album
-            txtSinger.text = songResponse.singer
-            Glide.with(requireContext()).load(songResponse.image).into(imgAlbum)
-            songUrl = songResponse.file
-            txtEnd.text = formatTimeInMillisToString(songResponse.duration.toLong())
-            indicatorSeekBar.max = songResponse.duration
-        }
-
+        binding.song = songResponse
         simpleExoPlayer?.apply {
             setAudioAttributes(
                 AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()
@@ -202,7 +182,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     override fun onStop() {
         super.onStop()
-        binding.btnPlay.background = resources.getDrawable(R.drawable.ic_baseline_play_arrow_24, null)
+        binding.btnPlay.background =
+            resources.getDrawable(R.drawable.ic_baseline_play_arrow_24, null)
         simpleExoPlayer.pause()
     }
 
@@ -222,20 +203,19 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                     }
                     requireActivity().runOnUiThread {
                         model.seekTo(simpleExoPlayer.currentPosition.toLong() / 1000)
-                         tmpIndex = findLowerBound(lyricList, (simpleExoPlayer!!.currentPosition))
+                        tmpIndex = findLowerBound(lyricList, (simpleExoPlayer!!.currentPosition))
                         if (nowIndex != tmpIndex) { // 현재의 가사
-                            // 아이거 그거다. arraylist를 바꾸는 법 모델.
                             lyricList[tmpIndex].highlight = true
                             if (nowIndex >= 0) {// 나머지 가사
                                 lyricList[nowIndex].highlight = false
                             }
                             nowIndex = tmpIndex
                             model.getLyrics(lyricList)
-                var centerOfScreen = binding.recyclerView.height / 3
-                (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-                    tmpIndex,
-                    centerOfScreen
-                )
+                            var centerOfScreen = binding.recyclerView.height / 3
+                            (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                                tmpIndex,
+                                centerOfScreen
+                            )
                         }
                     }
                 }

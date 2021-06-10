@@ -6,9 +6,10 @@
         <variable
             name="mFragment"
             type="com.example.floapplication.ui.main.view.fragment.MainFragment" />
+        <variable
+            name="song"
+            type="com.example.floapplication.data.model.SongResponse" />
     </data>
-
-
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
@@ -20,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-
+        android:text="@{song.title}"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,6 +33,7 @@
         android:layout_marginTop="7dp"
         android:textColor="@color/black"
         android:textSize="18sp"
+        android:text="@{song.singer}"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtAlbum" />
@@ -42,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
         android:textColor="@color/black"
+        android:text="@{song.album}"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,6 +64,7 @@
 
         <ImageView
             android:id="@+id/imgAlbum"
+            imageUrl="@{song.image}"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </androidx.cardview.widget.CardView>
@@ -88,6 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="32dp"
+        android:max="@{song.duration}"
         android:layout_marginEnd="10dp"
         app:isb_show_indicator="rectangle"
         app:layout_constraintEnd_toEndOf="parent"
@@ -148,11 +153,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        format="@{song.duration}"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/indicatorSeekBar" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

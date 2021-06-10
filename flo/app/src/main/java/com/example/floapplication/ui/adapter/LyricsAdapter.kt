@@ -11,6 +11,7 @@ import com.example.floapplication.databinding.HolderLyricsBinding
 
 class LyricsAdapter : RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
     var lyricsList = ArrayList<Lyric>()
+    var TAG = "LYRICS_ADAPTER"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LyricsAdapter.ListViewHolder {
         val binding = HolderLyricsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ListViewHolder(binding)
@@ -30,6 +31,10 @@ class LyricsAdapter : RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
 
             binding.list = data
         }
-
+        init {
+            binding.root.setOnClickListener {
+                Log.d(TAG, "qrqr: ")
+            }
+        }
     }
 }

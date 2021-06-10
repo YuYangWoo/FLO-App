@@ -20,7 +20,6 @@ fun findLowerBound(lyrics: List<Lyric>, currentTime: Int): Int {
     var start = 0
     var mid = 0
     var end = lyrics.size - 1
-    val TAG = "QQQQDDDD"
 
     if (currentTime >= lyrics[end].time) { // 현재노래시간이 가사 시간보다크면
         return end

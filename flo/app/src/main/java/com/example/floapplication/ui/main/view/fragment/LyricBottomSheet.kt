@@ -10,9 +10,11 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.floapplication.R
 import com.example.floapplication.databinding.LyricBottomSheetBinding
+import com.example.floapplication.ui.adapter.LyricViewAdpater
 import com.example.floapplication.ui.adapter.LyricsAdapter
 import com.example.floapplication.ui.base.BaseBottomSheet
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
@@ -29,10 +31,20 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         binding.song = model.songData.value
         Log.d(TAG, "init:${model.lyricsData} ")
         initRecyclerView()
+        initViewModel()
+    }
+
+    private fun initViewModel() {
+        model.lyricsData.observe(viewLifecycleOwner, Observer { t ->
+            binding.recyclerLyric.adapter = LyricViewAdpater().apply {
+                lyricsList = t
+                notifyDataSetChanged()
+            }
+        })
     }
     private fun initRecyclerView() {
         with(binding.recyclerLyric) {
-            adapter = LyricsAdapter().apply {
+            adapter = LyricViewAdpater().apply {
                 lyricsList = model.lyricsData.value!!
                 notifyDataSetChanged()
             }

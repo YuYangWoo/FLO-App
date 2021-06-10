@@ -9,16 +9,18 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.floapplication.R
 import com.example.floapplication.data.model.Lyric
+import com.example.floapplication.databinding.HolderItemBinding
 import com.example.floapplication.databinding.HolderLyricsBinding
 import com.example.floapplication.ui.main.view.fragment.LyricBottomSheet
 
 class LyricsAdapter constructor(): RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
     var lyricsList = ArrayList<Lyric>()
     var TAG = "LYRICS_ADAPTER"
+    var kind = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LyricsAdapter.ListViewHolder {
-        val binding = HolderLyricsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ListViewHolder(binding)
+            val binding = HolderLyricsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return ListViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: LyricsAdapter.ListViewHolder, position: Int) {
@@ -31,14 +33,19 @@ class LyricsAdapter constructor(): RecyclerView.Adapter<LyricsAdapter.ListViewHo
 
     inner class ListViewHolder(private val binding: HolderLyricsBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Lyric) {
-            Log.d("TAG", "onBindViewHolder: ${data}")
-
             binding.list = data
         }
         init {
+            // 켜져있는데 켜져있으면 에러남. 어뎁터 처리해줘야할듯. 뷰홀더를 2개 만들자.
             binding.root.setOnClickListener {
                 LyricBottomSheet().show((binding.root.context as AppCompatActivity).supportFragmentManager, "lyric")
             }
+        }
+    }
+
+    inner class LyricViewHolder(private val binding: HolderItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(data: Lyric) {
+            binding.list = data
         }
     }
 }

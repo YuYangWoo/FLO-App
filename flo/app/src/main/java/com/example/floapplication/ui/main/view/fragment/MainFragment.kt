@@ -41,7 +41,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private var simpleExoPlayer: MediaPlayer = MediaPlayer()
     private var lyricList = ArrayList<Lyric>()
     var nowIndex = -1
-
+    var tmpIndex = 0
     override fun init() {
         super.init()
         initViewModel()
@@ -92,11 +92,22 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 })
             lyricsData.observe(viewLifecycleOwner,
             Observer { t ->
-                LyricsAdapter().apply {
-                    Log.d(TAG, "initViewModel: 가사강조 $t")
+                Log.d(TAG, "initViewModelis lyricsData ${t}")
+                binding.recyclerView.adapter = LyricsAdapter().apply {
                     lyricsList = t
                     notifyDataSetChanged()
                 }
+
+//
+//                (binding.recyclerView.adapter as LyricsAdapter).apply {
+//                    lyricsList = t
+//                    notifyDataSetChanged()
+//                }
+//                var centerOfScreen = binding.recyclerView.height / 3
+//                (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+//                    tmpIndex,
+//                    centerOfScreen
+//                )
             })
         }
     }
@@ -211,22 +222,20 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                     }
                     requireActivity().runOnUiThread {
                         model.seekTo(simpleExoPlayer.currentPosition.toLong() / 1000)
-                        var tmpIndex = findLowerBound(lyricList, (simpleExoPlayer!!.currentPosition))
+                         tmpIndex = findLowerBound(lyricList, (simpleExoPlayer!!.currentPosition))
                         if (nowIndex != tmpIndex) { // 현재의 가사
                             // 아이거 그거다. arraylist를 바꾸는 법 모델.
                             lyricList[tmpIndex].highlight = true
-                            model.lyricAdd(lyricList)
                             if (nowIndex >= 0) {// 나머지 가사
                                 lyricList[nowIndex].highlight = false
-                                model.lyricAdd(lyricList)
                             }
                             nowIndex = tmpIndex
-
-                            var centerOfScreen = binding.recyclerView.height / 3
-                            (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-                                tmpIndex,
-                                centerOfScreen
-                            )
+                            model.getLyrics(lyricList)
+                var centerOfScreen = binding.recyclerView.height / 3
+                (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                    tmpIndex,
+                    centerOfScreen
+                )
                         }
                     }
                 }

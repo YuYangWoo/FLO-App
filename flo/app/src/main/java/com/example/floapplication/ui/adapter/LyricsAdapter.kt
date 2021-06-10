@@ -18,7 +18,6 @@ class LyricsAdapter : RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
 
     override fun onBindViewHolder(holder: LyricsAdapter.ListViewHolder, position: Int) {
         holder.bind(lyricsList[position])
-        Log.d("TAG", "onBindViewHolder: ${lyricsList[position]}")
     }
 
     override fun getItemCount(): Int {
@@ -27,6 +26,8 @@ class LyricsAdapter : RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
 
     inner class ListViewHolder(private val binding: HolderLyricsBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Lyric) {
+            Log.d("TAG", "onBindViewHolder: ${data}")
+
             binding.list = data
         }
 

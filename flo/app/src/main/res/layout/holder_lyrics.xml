@@ -18,7 +18,8 @@
             android:id="@+id/txtLyrics"
             android:layout_width="match_parent"
             android:textColor="@{list.highlight == true ? @color/black : @color/gray}"
-            android:textSize="17sp"
+            highLightBold="@{list.highlight}"
+            highLightSize="@{list.highlight}"
             android:text="@{list.lyric}"
             android:layout_height="wrap_content"/>
     </LinearLayout>

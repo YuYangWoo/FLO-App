@@ -27,20 +27,12 @@ class LyricsAdapter : RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
         holder.bind(lyricsList[position])
     }
 
-    override fun onBindViewHolder(
-        holder: ListViewHolder,
-        position: Int,
-        payloads: MutableList<Any>
-    ) {
-        if(payloads.isEmpty())
-        super.onBindViewHolder(holder, position, payloads)
-    }
     override fun getItemCount(): Int {
         return lyricsList.size
     }
 
     override fun getItemId(position: Int): Long {
-        return position.toLong()
+        return lyricsList[position].hashCode().toLong()
     }
 
     inner class ListViewHolder(private val binding: HolderLyricsBinding) : RecyclerView.ViewHolder(binding.root) {

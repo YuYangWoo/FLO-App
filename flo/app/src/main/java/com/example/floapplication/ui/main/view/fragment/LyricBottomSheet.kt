@@ -32,6 +32,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         Log.d(TAG, "init:${model.lyricsData} ")
         initRecyclerView()
         initViewModel()
+        initBtnListener()
     }
 
     private fun initViewModel() {
@@ -41,6 +42,15 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
                 changeList(t)
 //                model.getLyrics(t)
             }
+
+        })
+
+        model.tmpIndex.observe(viewLifecycleOwner, Observer { index ->
+            var centerOfScreen = binding.recyclerLyric.height / 3
+            (binding.recyclerLyric.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                index,
+                centerOfScreen
+            )
         })
     }
 
@@ -56,4 +66,9 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         }
     }
 
+    private fun initBtnListener() {
+        binding.btnClose.setOnClickListener {
+            dismiss()
+        }
+    }
 }

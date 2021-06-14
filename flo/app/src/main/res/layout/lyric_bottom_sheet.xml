@@ -92,7 +92,7 @@
             app:layout_constraintStart_toEndOf="@+id/btnPlay" />
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/btnClose"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="7dp"

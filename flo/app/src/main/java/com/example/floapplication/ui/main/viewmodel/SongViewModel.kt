@@ -23,6 +23,8 @@ class SongViewModel(private val songRepository: SongRepository) : ViewModel() {
     val lyricsData: LiveData<ArrayList<Lyric>> = _lyricsData
     private val _playStatus = MutableLiveData<Int>()
     val playStatus = _playStatus
+    private val _tmPIndex = MutableLiveData<Int>()
+    val tmpIndex: LiveData<Int> = _tmPIndex
 
     // Song 통신
     fun callSong() = liveData {
@@ -51,4 +53,7 @@ class SongViewModel(private val songRepository: SongRepository) : ViewModel() {
         _lyricsData.postValue(item)
     }
 
+    fun getTmpIndex(index: Int) {
+        _tmPIndex.value = index
+    }
 }

@@ -10,6 +10,10 @@ import com.example.floapplication.databinding.HolderItemBinding
 import com.example.floapplication.databinding.HolderLyricsBinding
 import com.example.floapplication.ui.main.view.fragment.LyricBottomSheet
 import com.example.floapplication.util.DiffCallBack
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LyricViewAdpater : RecyclerView.Adapter<LyricViewAdpater.LyricViewHolder>(){
     var lyricsList = ArrayList<Lyric>()
@@ -30,12 +34,18 @@ class LyricViewAdpater : RecyclerView.Adapter<LyricViewAdpater.LyricViewHolder>(
     }
 
     fun changeList(newLyricList: ArrayList<Lyric>) {
-        val diffCallBack = DiffCallBack(lyricsList, newLyricList)
-        val diffResult = DiffUtil.calculateDiff(diffCallBack)
-        lyricsList.clear()
-        lyricsList.addAll(newLyricList)
+        CoroutineScope(Dispatchers.IO).launch {
+            val diffCallBack = DiffCallBack(lyricsList, newLyricList) // DiffCallBack 유틸에 old, new 리스트를 넣어준다.
+            val diffResult = DiffUtil.calculateDiff(diffCallBack) // diffCallBack을 인자로 받고 결과 값으로 DiffUtil.DiffResult를 반환
+            lyricsList.apply {
+                clear()
+                addAll(newLyricList)
+            }
+            withContext(Dispatchers.Main) {
+                diffResult.dispatchUpdatesTo(LyricViewAdpater())
+            }
+        }
 
-        diffResult.dispatchUpdatesTo(this)
     }
 
     inner class LyricViewHolder(private val binding: HolderItemBinding) : RecyclerView.ViewHolder(binding.root) {

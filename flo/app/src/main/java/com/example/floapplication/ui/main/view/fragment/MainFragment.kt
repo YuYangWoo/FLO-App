@@ -88,9 +88,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 Observer { t ->
                     Log.d(TAG, "initViewModelis lyricsData ${t}")
                     binding.recyclerView.adapter = LyricsAdapter().apply {
-                        setHasStableIds(true)
-                        lyricsList = t
-                        notifyDataSetChanged()
+                       submitList(t)
                     }
                 })
         }
@@ -109,11 +107,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         model.getLyrics(lyricList)
         with(binding.recyclerView) {
             adapter = LyricsAdapter().apply {
-                lyricsList = lyricList
-                notifyDataSetChanged()
+               submitList(lyricsList)
             }
             layoutManager = LinearLayoutManager(requireContext())
-
             setHasFixedSize(true)
         }
     }

@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.floapplication.R
+import com.example.floapplication.data.model.Lyric
 import com.example.floapplication.databinding.LyricBottomSheetBinding
 import com.example.floapplication.ui.adapter.LyricViewAdpater
 import com.example.floapplication.ui.adapter.LyricsAdapter
@@ -37,29 +38,21 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
 
     private fun initViewModel() {
         model.lyricsData.observe(viewLifecycleOwner, Observer { t ->
-            binding.recyclerLyric.adapter = LyricViewAdpater().apply {
-                setHasStableIds(true)
-                changeList(t)
-//                model.getLyrics(t)
-            }
-
-        })
-
-        model.tmpIndex.observe(viewLifecycleOwner, Observer { index ->
             var centerOfScreen = binding.recyclerLyric.height / 3
             (binding.recyclerLyric.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-                index,
+                model.tmpIndex.value!!,
                 centerOfScreen
             )
+            binding.recyclerLyric.adapter = LyricViewAdpater().apply{
+                submitList(t)
+            }
         })
     }
 
     private fun initRecyclerView() {
         with(binding.recyclerLyric) {
             adapter = LyricViewAdpater().apply {
-                setHasStableIds(true)
-                lyricsList = model.lyricsData.value!!
-                notifyDataSetChanged()
+            submitList(lyricsList)
             }
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)

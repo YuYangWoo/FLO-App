@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.floapplication.R
 import com.example.floapplication.data.model.Lyric
@@ -13,27 +14,10 @@ import com.example.floapplication.databinding.HolderItemBinding
 import com.example.floapplication.databinding.HolderLyricsBinding
 import com.example.floapplication.ui.main.view.fragment.LyricBottomSheet
 
-class LyricsAdapter : RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
+class LyricsAdapter : ListAdapter<Lyric, LyricsAdapter.ListViewHolder>(LyricViewAdpater.MyDiffCallback) {
     var lyricsList = ArrayList<Lyric>()
     var TAG = "LYRICS_ADAPTER"
     var kind = 0
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LyricsAdapter.ListViewHolder {
-            val binding = HolderLyricsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return ListViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: LyricsAdapter.ListViewHolder, position: Int) {
-        holder.bind(lyricsList[position])
-    }
-
-    override fun getItemCount(): Int {
-        return lyricsList.size
-    }
-
-    override fun getItemId(position: Int): Long {
-        return lyricsList[position].hashCode().toLong()
-    }
 
     inner class ListViewHolder(private val binding: HolderLyricsBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Lyric) {
@@ -45,6 +29,15 @@ class LyricsAdapter : RecyclerView.Adapter<LyricsAdapter.ListViewHolder>() {
                 LyricBottomSheet().show((binding.root.context as AppCompatActivity).supportFragmentManager, "lyric")
             }
         }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
+        val binding = HolderLyricsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ListViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
 }

@@ -32,7 +32,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private var lyricList = ArrayList<Lyric>()
     var nowIndex = -1
-
+    var tmpIndex = -1
 
     override fun init() {
         super.init()
@@ -107,7 +107,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         model.getLyrics(lyricList)
         with(binding.recyclerView) {
             adapter = LyricsAdapter().apply {
-               submitList(lyricsList)
+               submitList(lyricList)
             }
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
@@ -196,17 +196,18 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                     }
                     requireActivity().runOnUiThread {
                         model.seekTo(mediaPlayer.currentPosition.toLong() / 1000)
-                        model.getTmpIndex(findLowerBound(lyricList, (mediaPlayer!!.currentPosition)))
-                        if (nowIndex != model.tmpIndex.value) { // 현재의 가사
-                            lyricList[model.tmpIndex.value!!].highlight = true
+                        tmpIndex = findLowerBound(lyricList, (mediaPlayer!!.currentPosition))
+                        if (nowIndex != tmpIndex) { // 현재의 가사
+                            lyricList[tmpIndex].highlight = true
                             if (nowIndex >= 0) {// 나머지 가사
                                 lyricList[nowIndex].highlight = false
                             }
-                            nowIndex = model.tmpIndex.value!!
+                            nowIndex = tmpIndex
                             model.getLyrics(lyricList)
+                            model.getTmpIndex(tmpIndex)
                             var centerOfScreen = binding.recyclerView.height / 3
                             (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-                                model.tmpIndex.value!!,
+                                tmpIndex,
                                 centerOfScreen
                             )
                         }

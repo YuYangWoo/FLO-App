@@ -37,22 +37,27 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
     }
 
     private fun initViewModel() {
+
         model.lyricsData.observe(viewLifecycleOwner, Observer { t ->
+            binding.recyclerLyric.adapter = LyricViewAdpater().apply{
+                submitList(t)
+            }
+        })
+
+        model.tmpIndex.observe(viewLifecycleOwner, Observer { index ->
             var centerOfScreen = binding.recyclerLyric.height / 3
             (binding.recyclerLyric.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
                 model.tmpIndex.value!!,
                 centerOfScreen
             )
-            binding.recyclerLyric.adapter = LyricViewAdpater().apply{
-                submitList(t)
-            }
         })
+
     }
 
     private fun initRecyclerView() {
         with(binding.recyclerLyric) {
             adapter = LyricViewAdpater().apply {
-            submitList(lyricsList)
+            submitList(model.lyricsData.value!!)
             }
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)

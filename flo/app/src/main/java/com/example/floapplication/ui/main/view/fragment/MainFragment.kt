@@ -190,10 +190,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     override fun onStop() {
         super.onStop()
-        binding.btnPlay.background =
-            resources.getDrawable(R.drawable.ic_baseline_play_arrow_24, null)
         mediaPlayer.pause()
-        model.getPlayStatus(PAUSE)
+        model.getPlayStatus(PLAYING)
     }
 
     override fun onDestroy() {

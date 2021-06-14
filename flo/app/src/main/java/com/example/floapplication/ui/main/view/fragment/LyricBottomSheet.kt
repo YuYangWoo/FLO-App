@@ -46,6 +46,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
 
         model.lyricsData.observe(viewLifecycleOwner, Observer { t ->
             binding.recyclerLyric.adapter = LyricViewAdpater().apply {
+                ctx = requireContext()
                 submitList(t)
             }
         })
@@ -91,6 +92,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
     private fun initRecyclerView() {
         with(binding.recyclerLyric) {
             adapter = LyricViewAdpater().apply {
+                ctx = requireContext()
             submitList(model.lyricsData.value!!)
             }
             layoutManager = LinearLayoutManager(requireContext())

@@ -39,22 +39,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
     }
 
     private fun binding() {
-        with(binding.btnPlay) {
-            background = if (model.playStatus.value == PLAYING) {
-                Log.d(TAG, "initViewModel: ${model.playStatus.value}")
-                ResourcesCompat.getDrawable(
-                    resources,
-                    R.drawable.ic_baseline_pause_24,
-                    null
-                )
-            } else {
-                ResourcesCompat.getDrawable(
-                    resources,
-                    R.drawable.ic_baseline_play_arrow_24,
-                    null
-                )
-            }
-        }
+
     }
 
     private fun initViewModel() {
@@ -73,6 +58,34 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
             )
         })
 
+        model.playStatus.observe(viewLifecycleOwner, Observer { status ->
+            with(binding.btnPlay) {
+                background = when (status) {
+                    PLAYING -> { // 노래가 나오고 있을 때 멈춰야함.
+                        Log.d(TAG, "initViewModel: ${status}")
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_play_arrow_24,
+                            null
+                        )
+                    }
+                    PAUSE -> {
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_pause_24,
+                            null
+                        )
+                    }
+                    else -> {
+                        ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_play_arrow_24,
+                            null
+                        )
+                    }
+                }
+            }
+        })
     }
 
     private fun initRecyclerView() {
@@ -88,6 +101,15 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
     private fun initBtnListener() {
         binding.btnClose.setOnClickListener {
             dismiss()
+        }
+
+        binding.btnPlay.setOnClickListener {
+            if(model.playStatus.value == PLAYING) { // 음악이 재생중일 때
+                model.getPlayStatus(PAUSE)
+            }
+            else { // 음악이 재생중이 아닐 때
+                model.getPlayStatus(PLAYING)
+            }
         }
     }
 

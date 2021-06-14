@@ -91,6 +91,25 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                        submitList(t)
                     }
                 })
+            playStatus.observe(viewLifecycleOwner,
+            Observer { ps ->
+                Log.d(TAG, "initViewModel: 플레이상태는 $ps")
+                if(ps == PLAYING) { // 노래가 나오고있을 때 멈춰야함.
+                    mediaPlayer.pause()
+                    binding.btnPlay.background = ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ic_baseline_play_arrow_24,
+                        null
+                    )
+                    MyThread().threadPause()
+                }
+                else { // 노래가 안나올 때 노래를 틀어야함.
+                    binding.btnPlay.background =
+                        resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
+                    mediaPlayer.start()
+                    MyThread().threadStart()
+                }
+            })
         }
     }
 
@@ -130,21 +149,15 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     // 클릭 이벤트
     private fun initListeners() {
         binding.btnPlay.setOnClickListener {
-            if (!mediaPlayer.isPlaying) { // 노래가 안나올 때
-                binding.btnPlay.background =
-                    resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
-                mediaPlayer.start()
-                model.getPlayStatus(PLAYING)
-                MyThread().threadStart()
-            } else {
-                mediaPlayer.pause()
-                binding.btnPlay.background = ResourcesCompat.getDrawable(
-                    resources,
-                    R.drawable.ic_baseline_play_arrow_24,
-                    null
-                )
+            if (!mediaPlayer.isPlaying) { // 노래가 안나올 때 노래를 틀어야함.
                 model.getPlayStatus(PAUSE)
-                MyThread().threadPause()
+
+
+
+            } else { // 노래가 나올 때 노래를 멈춰야함.
+
+                model.getPlayStatus(PLAYING)
+
             }
         }
 

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.floapplication.R
@@ -34,12 +35,32 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         initRecyclerView()
         initViewModel()
         initBtnListener()
+        binding()
+    }
+
+    private fun binding() {
+        with(binding.btnPlay) {
+            background = if (model.playStatus.value == PLAYING) {
+                Log.d(TAG, "initViewModel: ${model.playStatus.value}")
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_baseline_pause_24,
+                    null
+                )
+            } else {
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_baseline_play_arrow_24,
+                    null
+                )
+            }
+        }
     }
 
     private fun initViewModel() {
 
         model.lyricsData.observe(viewLifecycleOwner, Observer { t ->
-            binding.recyclerLyric.adapter = LyricViewAdpater().apply{
+            binding.recyclerLyric.adapter = LyricViewAdpater().apply {
                 submitList(t)
             }
         })
@@ -68,5 +89,10 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         binding.btnClose.setOnClickListener {
             dismiss()
         }
+    }
+
+    companion object {
+        const val PLAYING = 1
+        const val PAUSE = 0
     }
 }

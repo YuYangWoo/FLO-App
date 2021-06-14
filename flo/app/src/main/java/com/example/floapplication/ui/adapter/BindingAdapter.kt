@@ -21,8 +21,8 @@ object BindingAdapter {
     @JvmStatic
     fun highLightSize(view: TextView, isHighLight : Boolean) {
         when (isHighLight) {
-            true -> view.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18.toFloat())
-            else -> view.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17.toFloat())
+            true -> view.setTextSize(TypedValue.COMPLEX_UNIT_SP, 19.toFloat())
+            else -> view.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18.toFloat())
         }
     }
     @BindingAdapter("imageUrl")

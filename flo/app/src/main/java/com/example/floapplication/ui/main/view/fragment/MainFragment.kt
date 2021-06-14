@@ -134,6 +134,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 binding.btnPlay.background =
                     resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
                 mediaPlayer.start()
+                model.getPlayStatus(PLAYING)
                 MyThread().threadStart()
             } else {
                 mediaPlayer.pause()
@@ -142,6 +143,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                     R.drawable.ic_baseline_play_arrow_24,
                     null
                 )
+                model.getPlayStatus(PAUSE)
                 MyThread().threadPause()
             }
         }
@@ -178,6 +180,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         binding.btnPlay.background =
             resources.getDrawable(R.drawable.ic_baseline_play_arrow_24, null)
         mediaPlayer.pause()
+        model.getPlayStatus(PAUSE)
     }
 
     override fun onDestroy() {
@@ -229,6 +232,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
 
     companion object {
-
+        const val PLAYING = 1
+        const val PAUSE = 0
     }
 }

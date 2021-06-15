@@ -26,7 +26,10 @@ class SongViewModel(private val songRepository: SongRepository) : ViewModel() {
     val playStatus = _playStatus
     private val _tmPIndex = MutableLiveData<Int>()
     val tmpIndex: LiveData<Int> = _tmPIndex
-    var player = MutableLiveData<MediaPlayer>()
+    val player = MutableLiveData<MediaPlayer>()
+    private val _seekLyric = MutableLiveData<Boolean>()
+    val seekLyric: LiveData<Boolean> = _seekLyric
+
     // Song 통신
     fun callSong() = liveData {
         emit(Resource.loading(null))
@@ -61,5 +64,9 @@ class SongViewModel(private val songRepository: SongRepository) : ViewModel() {
 
     fun getTmpIndex(index: Int) {
         _tmPIndex.value = index
+    }
+
+    fun getSeekLyric(bool: Boolean) {
+        _seekLyric.value = bool
     }
 }

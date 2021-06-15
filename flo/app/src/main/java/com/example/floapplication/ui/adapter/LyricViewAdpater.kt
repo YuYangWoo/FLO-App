@@ -14,15 +14,22 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class LyricViewAdpater : ListAdapter<Lyric, LyricViewAdpater.LyricViewHolder>(MyDiffCallback){
     lateinit var ctx: Context
-
-    inner class LyricViewHolder(private val binding: HolderItemBinding, context: Context) : RecyclerView.ViewHolder(binding.root) {
+    lateinit var songModel: SongViewModel
+    inner class LyricViewHolder(private val binding: HolderItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Lyric) {
             binding.list = data
         }
         init {
             binding.root.setOnClickListener {
-                (context as AppCompatActivity).supportFragmentManager.findFragmentByTag("lyric").let {
-                    (it as BottomSheetDialogFragment).dismiss()
+                when(songModel.seekLyric.value) {
+                    true -> { // 되게 되있으니 못하게 바꿔야함.
+
+                    }
+                    false -> { // FALSE 못하게 되있으니 되게 바꿔야함.
+                        (ctx as AppCompatActivity).supportFragmentManager.findFragmentByTag("lyric").let {
+                            (it as BottomSheetDialogFragment).dismiss()
+                        }
+                    }
                 }
 
             }
@@ -31,7 +38,7 @@ class LyricViewAdpater : ListAdapter<Lyric, LyricViewAdpater.LyricViewHolder>(My
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LyricViewHolder {
         val binding = HolderItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return LyricViewHolder(binding, ctx)
+        return LyricViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: LyricViewHolder, position: Int) {

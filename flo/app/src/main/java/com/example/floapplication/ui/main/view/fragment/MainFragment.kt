@@ -39,6 +39,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         initViewModel()
         initListeners()
         setSeekBar()
+        model.player.value = mediaPlayer
     }
 
     private fun initViewModel() {

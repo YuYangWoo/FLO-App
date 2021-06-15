@@ -10,6 +10,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.SeekBar
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,10 +37,38 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         initViewModel()
         initBtnListener()
         binding()
+        seekBar()
     }
 
     private fun binding() {
 
+    }
+
+    private fun seekBar() {
+        Log.d(TAG, "seekBar: ${model.songPositionData.value}")
+        binding.seekBar.max = model.songData.value!!.duration
+        binding.seekBar.progress = model.songPositionData.value!!
+        binding.seekBar.setOnSeekBarChangeListener(object :
+            SeekBar.OnSeekBarChangeListener {
+            // 사용자가 바꾸고 있으면
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    Log.d(TAG, "onProgressChanged: ${progress}")
+                    model.seekTo(progress.toLong())
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            // 시크바를 멈추면
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+//                mediaPlayer.seekTo(model.songPositionData.value!! * 1000)
+                model.player.value!!.seekTo(model.songPositionData.value!! * 1000)
+                Log.d(TAG, "onStopTrackingTouch: 현재 ${model.player.value!!.currentPosition}")
+            }
+        })
     }
 
     private fun initViewModel() {
@@ -87,6 +116,11 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
                 }
             }
         })
+        // 쓰레드로 이동함에 따라 Seekbar progress 바꾸기
+        model.songPositionData.observe(viewLifecycleOwner,
+            Observer { t ->
+                binding.seekBar.progress = t
+            })
     }
 
     private fun initRecyclerView() {

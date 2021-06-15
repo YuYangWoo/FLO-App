@@ -9,10 +9,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.floapplication.data.model.Lyric
 import com.example.floapplication.databinding.HolderItemBinding
+import com.example.floapplication.ui.main.viewmodel.SongViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class LyricViewAdpater : ListAdapter<Lyric, LyricViewAdpater.LyricViewHolder>(MyDiffCallback){
     lateinit var ctx: Context
+
     inner class LyricViewHolder(private val binding: HolderItemBinding, context: Context) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Lyric) {
             binding.list = data

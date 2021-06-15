@@ -1,12 +1,15 @@
 package com.example.floapplication.ui.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.floapplication.R
 import com.example.floapplication.data.model.Lyric
 import com.example.floapplication.databinding.HolderItemBinding
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
@@ -23,7 +26,11 @@ class LyricViewAdpater : ListAdapter<Lyric, LyricViewAdpater.LyricViewHolder>(My
             binding.root.setOnClickListener {
                 when(songModel.seekLyric.value) {
                     true -> { // 되게 되있으니 못하게 바꿔야함.
-
+                        binding.txtLyrics.setOnClickListener {
+                            Log.d("TAG", "txt adapter: ${songModel.lyricsData.value!![adapterPosition]}")
+                            songModel.player.value!!.seekTo(songModel.lyricsData.value!![adapterPosition].time)
+                            binding.txtLyrics.setTextColor(ContextCompat.getColor(ctx, R.color.black))
+                        }
                     }
                     false -> { // FALSE 못하게 되있으니 되게 바꿔야함.
                         (ctx as AppCompatActivity).supportFragmentManager.findFragmentByTag("lyric").let {

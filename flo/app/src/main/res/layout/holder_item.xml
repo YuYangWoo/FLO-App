@@ -9,17 +9,20 @@
     </data>
 
     <LinearLayout
+        android:id="@+id/linearTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/txtLyrics"
-            android:layout_width="match_parent"
-            android:textColor="@{list.highlight == true ? @color/black : @color/gray}"
             highLightBold="@{list.highlight}"
             highLightSize="@{list.highlight}"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:paddingLeft="3dp"
+            android:paddingTop="5dp"
             android:text="@{list.lyric, default=빠끄}"
-            android:layout_height="wrap_content"/>
+            android:textColor="@{list.highlight == true ? @color/black : @color/gray}" />
     </LinearLayout>
 </layout>

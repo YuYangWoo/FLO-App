@@ -152,9 +152,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         binding.btnPlay.setOnClickListener {
             if (!mediaPlayer.isPlaying) { // 노래가 안나올 때 노래를 틀어야함.
                 model.getPlayStatus(PAUSE)
-
-
-
             } else { // 노래가 나올 때 노래를 멈춰야함.
 
                 model.getPlayStatus(PLAYING)

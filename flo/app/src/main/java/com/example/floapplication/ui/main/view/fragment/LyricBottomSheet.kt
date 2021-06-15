@@ -29,6 +29,7 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric_bottom_sheet) {
     private val model: SongViewModel by sharedViewModel()
     private val TAG = "LYRIC_BOTTOM_SHEET"
+    private var possible = FALSE
     override fun init() {
         super.init()
         binding.song = model.songData.value
@@ -36,18 +37,18 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         initRecyclerView()
         initViewModel()
         initBtnListener()
-        binding()
         seekBar()
-    }
-
-    private fun binding() {
-
     }
 
     private fun seekBar() {
         Log.d(TAG, "seekBar: ${model.songPositionData.value}")
         binding.seekBar.max = model.songData.value!!.duration
-        binding.seekBar.progress = model.songPositionData.value!!
+        if(model.songPositionData.value == null) {
+            binding.seekBar.progress = 0
+        }
+        else {
+            binding.seekBar.progress = model.songPositionData.value!!
+        }
         binding.seekBar.setOnSeekBarChangeListener(object :
             SeekBar.OnSeekBarChangeListener {
             // 사용자가 바꾸고 있으면
@@ -147,10 +148,22 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
                 model.getPlayStatus(PLAYING)
             }
         }
+        binding.btnLyricSeek.setOnClickListener {
+            when(possible) {
+                TRUE -> { // 되게 되있으니 못하게 바꿔야함.
+
+                }
+                FALSE -> { // FALSE 못하게 되있으니 되게 바꿔야함.
+
+                }
+            }
+        }
     }
 
     companion object {
         const val PLAYING = 1
         const val PAUSE = 0
+        const val TRUE = true
+        const val FALSE = false
     }
 }

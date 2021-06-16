@@ -96,7 +96,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             Observer { ps ->
                 Log.d(TAG, "initViewModel: 플레이상태는 $ps")
                 if(ps == PLAYING) { // 노래가 나오고있을 때 멈춰야함.
-                    mediaPlayer.pause()
+                    model.player.value!!.pause()
                     binding.btnPlay.background = ResourcesCompat.getDrawable(
                         resources,
                         R.drawable.ic_baseline_play_arrow_24,
@@ -107,7 +107,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                 else { // 노래가 안나올 때 노래를 틀어야함.
                     binding.btnPlay.background =
                         resources.getDrawable(R.drawable.ic_baseline_pause_24, null)
-                    mediaPlayer.start()
+                    model.player.value!!.start()
                     MyThread().threadStart()
                 }
             })
@@ -137,7 +137,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     // Binding과 초기화
     private fun binding() {
         binding.song = songResponse
-        mediaPlayer?.apply {
+        model.player.value!!.apply {
             setAudioAttributes(
                 AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()
             )
@@ -150,12 +150,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     // 클릭 이벤트
     private fun initListeners() {
         binding.btnPlay.setOnClickListener {
-            if (!mediaPlayer.isPlaying) { // 노래가 안나올 때 노래를 틀어야함.
+            if (!model.player.value!!.isPlaying) { // 노래가 안나올 때 노래를 틀어야함.
                 model.getPlayStatus(PAUSE)
             } else { // 노래가 나올 때 노래를 멈춰야함.
-
                 model.getPlayStatus(PLAYING)
-
             }
         }
 
@@ -179,8 +177,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
             // 시크바를 멈추면
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                mediaPlayer.seekTo(model.songPositionData.value!! * 1000)
-                Log.d(TAG, "onStopTrackingTouch: 현재 ${mediaPlayer.currentPosition}")
+                model.player.value!!.seekTo(model.songPositionData.value!! * 1000)
+                Log.d(TAG, "onStopTrackingTouch: 현재 ${model.player.value!!.currentPosition}")
             }
         })
 
@@ -188,27 +186,27 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     override fun onStop() {
         super.onStop()
-        mediaPlayer.pause()
+        model.player.value!!.pause()
         model.getPlayStatus(PLAYING)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
+        model.player.value!!.release()
     }
 
     inner class MyThread : Thread() {
         var task = Runnable {
             run {
-                while (mediaPlayer.isPlaying) {
+                while (model.player.value!!.isPlaying) {
                     try {
                         sleep(1000)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                     requireActivity().runOnUiThread {
-                        model.seekTo(mediaPlayer.currentPosition.toLong() / 1000)
-                        tmpIndex = findLowerBound(lyricList, (mediaPlayer!!.currentPosition))
+                        model.seekTo(model.player.value!!.currentPosition.toLong() / 1000)
+                        tmpIndex = findLowerBound(lyricList, (model.player.value!!.currentPosition))
                         if (nowIndex != tmpIndex) { // 현재의 가사
                             lyricList[tmpIndex].highlight = true
                             if (nowIndex >= 0) {// 나머지 가사

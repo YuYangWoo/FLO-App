@@ -23,22 +23,6 @@ class LyricViewAdpater : ListAdapter<Lyric, LyricViewAdpater.LyricViewHolder>(My
             binding.list = data
         }
         init {
-//            binding.root.setOnClickListener {
-//                when(songModel.seekLyric.value) {
-//                    true -> { // 되게 되있으니 못하게 바꿔야함.
-//                        Log.d("TAG", "true: ${songModel.seekLyric.value!!}")
-//                    }
-//                    false -> { // FALSE 못하게 되있으니 되게 바꿔야함.
-//                        (ctx as AppCompatActivity).supportFragmentManager.findFragmentByTag("lyric").let {
-//                            (it as BottomSheetDialogFragment).dismiss()
-//                        }
-//                        Log.d("TAG", "false: ${songModel.seekLyric.value!!}")
-//
-//                    }
-//                }
-//
-//            }
-
             binding.linearTxt.setOnClickListener {
                 when(songModel.seekLyric.value) {
                     true -> {

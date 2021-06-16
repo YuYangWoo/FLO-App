@@ -83,9 +83,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
                 background = when (status) {
                     PLAYING -> { // 노래가 나오고 있을 때 멈춰야함.
                         Log.d(TAG, "initViewModel: ${status}")
-//                        model.player.value!!.pause()
-//                        var a = MainFragment().MyThread()
-//                        a.threadPause()
+                        model.player.value!!.pause()
                         ResourcesCompat.getDrawable(
                             resources,
                             R.drawable.ic_baseline_play_arrow_24,
@@ -94,9 +92,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
 
                     }
                     PAUSE -> {
-//                        model.player.value!!.start()
-//                        var a = MainFragment().MyThread()
-//                        a.threadStart()
+                        model.player.value!!.start()
                         ResourcesCompat.getDrawable(
                             resources,
                             R.drawable.ic_baseline_pause_24,
@@ -143,10 +139,15 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         }
 
         binding.btnPlay.setOnClickListener {
-            if(model.playStatus.value == PLAYING) { // 음악이 재생중일 때
+//            if(model.playStatus.value == PLAYING) { // 음악이 재생중일 때
+//                model.getPlayStatus(PAUSE)
+//            }
+//            else { // 음악이 재생중이 아닐 때
+//                model.getPlayStatus(PLAYING)
+//            }
+            if (!model.player.value!!.isPlaying) { // 노래가 안나올 때 노래를 틀어야함.
                 model.getPlayStatus(PAUSE)
-            }
-            else { // 음악이 재생중이 아닐 때
+            } else { // 노래가 나올 때 노래를 멈춰야함.
                 model.getPlayStatus(PLAYING)
             }
         }
@@ -159,7 +160,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
                 }
                 FALSE -> { // FALSE 못하게 되있으니 되게 바꿔야함.
                     model.getSeekLyric(TRUE)
-                    binding.btnLyricSeek.setColorFilter(ContextCompat.getColor(requireContext(), R.color.purple_700), android.graphics.PorterDuff.Mode.SRC_IN)
+                    binding.btnLyricSeek.setColorFilter(ContextCompat.getColor(requireContext(), R.color.purple_200), android.graphics.PorterDuff.Mode.SRC_IN)
                 }
             }
         }

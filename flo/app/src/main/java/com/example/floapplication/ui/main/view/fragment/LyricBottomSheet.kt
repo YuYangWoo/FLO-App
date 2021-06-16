@@ -21,7 +21,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         super.init()
         binding.song = model.songData.value
         model.getSeekLyric(FALSE)
-        Log.d(TAG, "init:${model.lyricsData} ")
+        Log.d(TAG, "init:${model.playStatus.value} ")
         initRecyclerView()
         initViewModel()
         initBtnListener()
@@ -114,6 +114,12 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
                 binding.seekBar.progress = t
             })
 
+        // Seekbar에 따라 시작시간 Text 바꾸기
+        model.songPositionTextData.observe(viewLifecycleOwner,
+            Observer { t ->
+                binding.txtStart.text = t
+            })
+
     }
 
     private fun initRecyclerView() {
@@ -141,6 +147,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
             }
         }
 
+        // 가사 누르면 seek하게 하는 버튼
         binding.btnLyricSeek.setOnClickListener {
             when (model.seekLyric.value) {
                 TRUE -> { // 되게 되있으니 못하게 바꿔야함.

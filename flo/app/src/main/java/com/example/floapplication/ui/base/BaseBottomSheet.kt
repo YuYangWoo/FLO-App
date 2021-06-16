@@ -55,7 +55,8 @@ open class BaseBottomSheet<VB: ViewDataBinding>(private val layoutId: Int) : Bot
             parentLayout?.let { it ->
                 val behaviour = BottomSheetBehavior.from(it)
                 setupFullHeight(it)
-                behaviour.state = BottomSheetBehavior.STATE_EXPANDED
+                behaviour.state = BottomSheetBehavior.STATE_EXPANDED // 확장가능
+                behaviour.skipCollapsed = true // 접히는 구간을 스킵하고 바로 닫힘
             }
         }
         return dialog

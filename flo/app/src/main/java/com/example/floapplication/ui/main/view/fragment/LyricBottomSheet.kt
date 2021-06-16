@@ -11,6 +11,7 @@ import com.example.floapplication.databinding.LyricBottomSheetBinding
 import com.example.floapplication.ui.adapter.LyricViewAdpater
 import com.example.floapplication.ui.base.BaseBottomSheet
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
+import com.example.floapplication.util.singleton.ScrollRecyclerview
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric_bottom_sheet) {
@@ -70,11 +71,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
 
         // tmpIndex에 따라 recyclerview focus 변경
         model.tmpIndex.observe(viewLifecycleOwner, Observer { index ->
-            var centerOfScreen = binding.recyclerLyric.height / 3
-            (binding.recyclerLyric.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-                model.tmpIndex.value!!,
-                centerOfScreen
-            )
+            ScrollRecyclerview.toPosition(binding.recyclerLyric, index)
         })
 
         // 플레이 상태에 따른 이미지 변경 및 재생과 정지

@@ -17,6 +17,7 @@ import com.example.floapplication.ui.base.BaseFragment
 import com.example.floapplication.ui.main.view.dialog.ProgressDialog
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
 import com.example.floapplication.util.findLowerBound
+import com.example.floapplication.util.singleton.ScrollRecyclerview
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import java.lang.Exception
 import java.lang.Runnable
@@ -228,11 +229,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                             nowIndex = tmpIndex
                             model.getLyrics(lyricList)
                             model.getTmpIndex(tmpIndex)
-                            var centerOfScreen = binding.recyclerView.height / 3
-                            (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-                                tmpIndex,
-                                centerOfScreen
-                            )
+//                            var centerOfScreen = binding.recyclerView.height / 3
+//                            (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+//                                tmpIndex,
+//                                centerOfScreen
+//                            )
+                            ScrollRecyclerview.toPosition(binding.recyclerView, tmpIndex)
                         }
                     }
                 }

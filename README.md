@@ -18,8 +18,6 @@ FLO Music Streaming Application - Android
  - Play/Stop 버튼
  
  # 🤩 화면 소개
- ![1](https://user-images.githubusercontent.com/59405161/122176762-ed492000-cebf-11eb-8ab8-55945069554c.PNG)
- ![2](https://user-images.githubusercontent.com/59405161/122176768-ee7a4d00-cebf-11eb-9230-37df3e1e7cc4.PNG)
  ![ezgif com-gif-maker](https://user-images.githubusercontent.com/59405161/122177537-b0315d80-cec0-11eb-8dea-3a316b61eaa9.gif)
  
  # 👊 기능 요구 사항
@@ -38,7 +36,7 @@ FLO Music Streaming Application - Android
   - 토글 버튼 off: 특정 가사 터치 시 전체 가사 화면 닫기
   - 전체 가사 화면 닫기 버튼이 있습니다.
   - 현재 재생 중인 부분의 가사가 하이라이팅 됩니다.
-  - 
+  
  # 😋 디자인 패턴 및 라이브러리 
  #### MVVM 아키텍처 적용
  #### Retrofit 2 : 서버 통신에 사용

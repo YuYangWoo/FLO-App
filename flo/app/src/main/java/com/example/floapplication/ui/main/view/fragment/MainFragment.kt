@@ -25,7 +25,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     private val model: SongViewModel by sharedViewModel()
     private var songResponse = SongResponse()
     private val TAG = "MAIN_FRAGMENT"
-    private var songUrl = ""
     private val dialog by lazy {
         ProgressDialog(requireContext())
     }
@@ -74,16 +73,28 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
         })
 
         with(model) {
+
             // Seekbar에 따라 시작시간 Text 바꾸기
             songPositionTextData.observe(viewLifecycleOwner,
                 Observer { t ->
                     binding.txtStart.text = t
                 })
+
             // 쓰레드로 이동함에 따라 Seekbar progress 바꾸기
             songPositionData.observe(viewLifecycleOwner,
                 Observer { t ->
                     binding.indicatorSeekBar.progress = t
+                    if(binding.indicatorSeekBar.progress == binding.indicatorSeekBar.max) { // 재생이 끝나면 플레이 버튼으로 바꾸고 Status를 바꿔준다.
+                        binding.btnPlay.background = ResourcesCompat.getDrawable(
+                            resources,
+                            R.drawable.ic_baseline_play_arrow_24,
+                            null
+                        )
+                        model.getPlayStatus(PLAYING)
+                    }
+
                 })
+
             // 가사 데이터 관찰에 따른 강조
             lyricsData.observe(viewLifecycleOwner,
                 Observer { t ->
@@ -92,6 +103,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                        submitList(t)
                     }
                 })
+
+            // 플레이 상태에 따라 재생 및 정지
             playStatus.observe(viewLifecycleOwner,
             Observer { ps ->
                 Log.d(TAG, "initViewModel: 플레이상태는 $ps")

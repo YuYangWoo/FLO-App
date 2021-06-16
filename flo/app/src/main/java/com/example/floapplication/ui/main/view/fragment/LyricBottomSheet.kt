@@ -13,10 +13,10 @@ import com.example.floapplication.ui.base.BaseBottomSheet
 import com.example.floapplication.ui.main.viewmodel.SongViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-
 class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric_bottom_sheet) {
     private val model: SongViewModel by sharedViewModel()
     private val TAG = "LYRIC_BOTTOM_SHEET"
+
     override fun init() {
         super.init()
         binding.song = model.songData.value
@@ -31,10 +31,9 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
     private fun seekBar() {
         Log.d(TAG, "seekBar: ${model.songPositionData.value}")
         binding.seekBar.max = model.songData.value!!.duration
-        if(model.songPositionData.value == null) {
+        if (model.songPositionData.value == null) {
             binding.seekBar.progress = 0
-        }
-        else {
+        } else {
             binding.seekBar.progress = model.songPositionData.value!!
         }
         binding.seekBar.setOnSeekBarChangeListener(object :
@@ -53,7 +52,6 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
 
             // 시크바를 멈추면
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-//                mediaPlayer.seekTo(model.songPositionData.value!! * 1000)
                 model.player.value!!.seekTo(model.songPositionData.value!! * 1000)
                 Log.d(TAG, "onStopTrackingTouch: 현재 ${model.player.value!!.currentPosition}")
             }
@@ -109,16 +107,13 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
                 }
             }
         })
+
         // 쓰레드로 이동함에 따라 Seekbar progress 바꾸기
         model.songPositionData.observe(viewLifecycleOwner,
             Observer { t ->
                 binding.seekBar.progress = t
             })
 
-        model.seekLyric.observe(viewLifecycleOwner,
-        Observer { b ->
-
-        })
     }
 
     private fun initRecyclerView() {
@@ -126,7 +121,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
             adapter = LyricViewAdpater().apply {
                 ctx = requireContext()
                 songModel = model
-            submitList(model.lyricsData.value!!)
+                submitList(model.lyricsData.value!!)
             }
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
@@ -139,28 +134,33 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         }
 
         binding.btnPlay.setOnClickListener {
-//            if(model.playStatus.value == PLAYING) { // 음악이 재생중일 때
-//                model.getPlayStatus(PAUSE)
-//            }
-//            else { // 음악이 재생중이 아닐 때
-//                model.getPlayStatus(PLAYING)
-//            }
             if (!model.player.value!!.isPlaying) { // 노래가 안나올 때 노래를 틀어야함.
                 model.getPlayStatus(PAUSE)
             } else { // 노래가 나올 때 노래를 멈춰야함.
                 model.getPlayStatus(PLAYING)
             }
         }
+
         binding.btnLyricSeek.setOnClickListener {
-            when(model.seekLyric.value) {
+            when (model.seekLyric.value) {
                 TRUE -> { // 되게 되있으니 못하게 바꿔야함.
                     model.getSeekLyric(FALSE)
-                    binding.btnLyricSeek.setColorFilter(ContextCompat.getColor(requireContext(), R.color.gray), android.graphics.PorterDuff.Mode.SRC_IN)
+                    binding.btnLyricSeek.setColorFilter(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.gray
+                        ), android.graphics.PorterDuff.Mode.SRC_IN
+                    )
 
                 }
                 FALSE -> { // FALSE 못하게 되있으니 되게 바꿔야함.
                     model.getSeekLyric(TRUE)
-                    binding.btnLyricSeek.setColorFilter(ContextCompat.getColor(requireContext(), R.color.purple_200), android.graphics.PorterDuff.Mode.SRC_IN)
+                    binding.btnLyricSeek.setColorFilter(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.purple_200
+                        ), android.graphics.PorterDuff.Mode.SRC_IN
+                    )
                 }
             }
         }

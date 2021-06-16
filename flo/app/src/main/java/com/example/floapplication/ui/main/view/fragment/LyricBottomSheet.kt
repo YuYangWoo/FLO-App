@@ -59,9 +59,9 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
     }
 
     private fun initViewModel() {
-
+        with(model) {
         // lyricsData가 바뀌면 recyclerview adapter로 가사 하이라이팅
-        model.lyricsData.observe(viewLifecycleOwner, Observer { t ->
+        lyricsData.observe(viewLifecycleOwner, Observer { t ->
             binding.recyclerLyric.adapter = LyricViewAdpater().apply {
                 ctx = requireContext()
                 songModel = model
@@ -70,12 +70,12 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         })
 
         // tmpIndex에 따라 recyclerview focus 변경
-        model.tmpIndex.observe(viewLifecycleOwner, Observer { index ->
+        tmpIndex.observe(viewLifecycleOwner, Observer { index ->
             ScrollRecyclerview.toPosition(binding.recyclerLyric, index)
         })
 
         // 플레이 상태에 따른 이미지 변경 및 재생과 정지
-        model.playStatus.observe(viewLifecycleOwner, Observer { status ->
+        playStatus.observe(viewLifecycleOwner, Observer { status ->
             with(binding.btnPlay) {
                 background = when (status) {
                     PLAYING -> { // 노래가 나오고 있을 때 멈춰야함.
@@ -108,17 +108,17 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         })
 
         // 쓰레드로 이동함에 따라 Seekbar progress 바꾸기
-        model.songPositionData.observe(viewLifecycleOwner,
+        songPositionData.observe(viewLifecycleOwner,
             Observer { t ->
                 binding.seekBar.progress = t
             })
 
         // Seekbar에 따라 시작시간 Text 바꾸기
-        model.songPositionTextData.observe(viewLifecycleOwner,
+        songPositionTextData.observe(viewLifecycleOwner,
             Observer { t ->
                 binding.txtStart.text = t
             })
-
+        }
     }
 
     private fun initRecyclerView() {

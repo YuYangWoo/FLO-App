@@ -229,11 +229,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                             nowIndex = tmpIndex
                             model.getLyrics(lyricList)
                             model.getTmpIndex(tmpIndex)
-//                            var centerOfScreen = binding.recyclerView.height / 3
-//                            (binding.recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
-//                                tmpIndex,
-//                                centerOfScreen
-//                            )
                             ScrollRecyclerview.toPosition(binding.recyclerView, tmpIndex)
                         }
                     }

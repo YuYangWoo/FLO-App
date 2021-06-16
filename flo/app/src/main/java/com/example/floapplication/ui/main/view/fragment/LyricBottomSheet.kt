@@ -21,7 +21,6 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
         super.init()
         binding.song = model.songData.value
         model.getSeekLyric(FALSE)
-        Log.d(TAG, "init:${model.playStatus.value} ")
         initRecyclerView()
         initViewModel()
         initBtnListener()
@@ -60,6 +59,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
 
     private fun initViewModel() {
 
+        // lyricsData가 바뀌면 recyclerview adapter로 가사 하이라이팅
         model.lyricsData.observe(viewLifecycleOwner, Observer { t ->
             binding.recyclerLyric.adapter = LyricViewAdpater().apply {
                 ctx = requireContext()
@@ -68,6 +68,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
             }
         })
 
+        // tmpIndex에 따라 recyclerview focus 변경
         model.tmpIndex.observe(viewLifecycleOwner, Observer { index ->
             var centerOfScreen = binding.recyclerLyric.height / 3
             (binding.recyclerLyric.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
@@ -76,6 +77,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
             )
         })
 
+        // 플레이 상태에 따른 이미지 변경 및 재생과 정지
         model.playStatus.observe(viewLifecycleOwner, Observer { status ->
             with(binding.btnPlay) {
                 background = when (status) {

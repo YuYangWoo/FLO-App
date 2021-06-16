@@ -218,8 +218,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
                         e.printStackTrace()
                     }
                     requireActivity().runOnUiThread {
-                        model.seekTo(model.player.value!!.currentPosition.toLong() / 1000)
-                        tmpIndex = findLowerBound(lyricList, (model.player.value!!.currentPosition))
+                        model.seekTo(model.player.value!!.currentPosition.toLong() / 1000) // 현재 플레이 되고 있는 시간
+                        tmpIndex = findLowerBound(lyricList, (model.player.value!!.currentPosition)) // 현재 플레이 되고 있는 lyricList의 index
                         if (nowIndex != tmpIndex) { // 현재의 가사
                             lyricList[tmpIndex].highlight = true
                             if (nowIndex >= 0) {// 나머지 가사

@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="13dp"
                 android:text="@{song.title}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -40,6 +40,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/txtTitle" />
 
+            <TextView
+                android:id="@+id/txtGuide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:text="가사 탐색 ON : 가사를 터치한 구간부터 재생됩니다."
+                android:textColor="@color/purple_700"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/recyclerLyric"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerLyric"
                 android:layout_width="0dp"
@@ -48,15 +60,21 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.69"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/txtSinger" />
+                app:layout_constraintTop_toBottomOf="@id/guideLine4"
+                app:layout_constraintBottom_toTopOf="@id/guideLine1"/>
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideLine2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintGuide_percent="0.97"
+                android:orientation="horizontal"/>
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideLine4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_percent="0.12"
                 android:orientation="horizontal"/>
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideLine0"

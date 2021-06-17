@@ -1,6 +1,7 @@
 package com.example.floapplication.ui.main.view.fragment
 
 import android.util.Log
+import android.view.View
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -157,7 +158,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
                             R.color.gray
                         ), android.graphics.PorterDuff.Mode.SRC_IN
                     )
-
+                    binding.txtGuide.visibility = View.GONE
                 }
                 FALSE -> { // FALSE 못하게 되있으니 되게 바꿔야함.
                     model.getSeekLyric(TRUE)
@@ -167,6 +168,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
                             R.color.nam
                         ), android.graphics.PorterDuff.Mode.SRC_IN
                     )
+                    binding.txtGuide.visibility = View.VISIBLE
                 }
             }
         }

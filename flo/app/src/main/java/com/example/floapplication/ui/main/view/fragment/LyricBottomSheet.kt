@@ -164,7 +164,7 @@ class LyricBottomSheet : BaseBottomSheet<LyricBottomSheetBinding>(R.layout.lyric
                     binding.btnLyricSeek.setColorFilter(
                         ContextCompat.getColor(
                             requireContext(),
-                            R.color.purple_200
+                            R.color.nam
                         ), android.graphics.PorterDuff.Mode.SRC_IN
                     )
                 }

@@ -22,7 +22,7 @@
             android:layout_height="30dp"
             android:paddingLeft="3dp"
             android:paddingTop="5dp"
-            android:text="@{list.lyric, default=빠끄}"
+            android:text="@{list.lyric}"
             android:textColor="@{list.highlight == true ? @color/black : @color/gray}" />
     </LinearLayout>
 </layout>

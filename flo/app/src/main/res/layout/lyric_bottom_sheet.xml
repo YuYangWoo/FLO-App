@@ -11,6 +11,9 @@
             name="lyric"
             type="com.example.floapplication.ui.main.view.fragment.LyricBottomSheet" />
     </data>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -49,6 +52,7 @@
                 android:textColor="@color/purple_700"
                 android:textSize="14sp"
                 android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/txtSinger"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/recyclerLyric"/>
 
@@ -176,4 +180,5 @@
                 app:srcCompat="@drawable/ic_baseline_filter_list_24" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
+    </ScrollView>
 </layout>
